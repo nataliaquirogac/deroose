@@ -279,6 +279,59 @@
     font-size: 0.9rem;
   }
 
+  .mode-toggle {
+    display: flex;
+    gap: 8px;
+    flex-wrap: wrap;
+    margin-top: 10px;
+  }
+
+  .mode-btn {
+    flex: 1 1 200px;
+    text-align: left;
+    padding: 9px 12px;
+    border-radius: 8px;
+    border: 1px solid var(--line);
+    background: var(--paper);
+    color: var(--ink);
+    font-family: "Archivo", sans-serif;
+    font-size: 0.84rem;
+    cursor: pointer;
+  }
+
+  .mode-btn .mode-title { font-weight: 600; display: block; }
+  .mode-btn .mode-meta {
+    display: block;
+    font-family: "IBM Plex Mono", monospace;
+    font-size: 0.72rem;
+    color: var(--muted);
+    margin-top: 2px;
+  }
+
+  .mode-btn.active {
+    border-color: var(--accent);
+    background: color-mix(in srgb, var(--accent) 12%, var(--paper));
+  }
+  .mode-btn.active .mode-meta { color: var(--accent); }
+
+  .rent-note {
+    font-size: 0.78rem;
+    color: var(--muted);
+    margin: 8px 0 0;
+  }
+
+  .tag-rent {
+    font-family: "IBM Plex Mono", monospace;
+    font-size: 0.66rem;
+    letter-spacing: 0.03em;
+    text-transform: uppercase;
+    padding: 2px 6px;
+    border-radius: 5px;
+    background: var(--gold-soft);
+    color: var(--gold);
+    white-space: nowrap;
+  }
+
   .checkline {
     display: flex;
     align-items: center;
@@ -510,6 +563,17 @@
         <input type="text" inputmode="numeric" id="qtyInput" value="1" aria-label="Cantidad">
         <button class="btn primary" id="addBtn">Agregar</button>
       </div>
+      <div class="mode-toggle" id="modeToggle" style="display:none;">
+        <button type="button" class="mode-btn" data-mode="buy">
+          <span class="mode-title">Comprar</span>
+          <span class="mode-meta" id="modeMetaBuy"></span>
+        </button>
+        <button type="button" class="mode-btn" data-mode="rent">
+          <span class="mode-title">Rentar para el evento</span>
+          <span class="mode-meta" id="modeMetaRent"></span>
+        </button>
+      </div>
+      <p class="rent-note" id="rentNote" style="display:none;"></p>
       <p class="error-msg" id="addError" style="display:none;"></p>
     </div>
 
@@ -543,8 +607,10 @@
   <footer class="disclaimer">
     Precios de referencia por unidad y tiempos de disponibilidad estimados a partir de hallazgos
     cualitativos de la investigación de mercado (piso atemporal vs. moda de temporada, cuello de
-    botella en especies de baja oferta, ejemplares maduros de paisajismo). Ajusta el catálogo
-    <code>PLANTS</code> en el código fuente con precios y tiempos reales antes de cotizar en firme.
+    botella en especies de baja oferta, ejemplares maduros de paisajismo). Los árboles y ejemplares
+    se pueden rentar para eventos desde nuestro inventario (precio y tiempo de entrega mucho menores
+    que comprarlos) en lugar de comprarse en definitiva. Ajusta el catálogo <code>PLANTS</code> en el
+    código fuente con precios y tiempos reales antes de cotizar en firme.
   </footer>
 
 </div>
@@ -589,13 +655,21 @@
       note: "El cliente suele haberla visto en redes o fuera del país." },
 
     { id: "encino-rojo", name: "Encino rojo (ejemplar 2–3 m)", cat: "Árboles y ejemplares", price: 4200, weeks: 30,
-      note: "Especie adaptada, muy cotizada como árbol de entrada." },
+      note: "Especie adaptada, muy cotizada como árbol de entrada.",
+      rentable: true, rent: { price: 850, weeks: 1 },
+      rentNote: "Sale de nuestro inventario: entrega, maniobra y recolección al día siguiente del evento." },
     { id: "jacaranda", name: "Jacaranda (ejemplar 2–3 m)", cat: "Árboles y ejemplares", price: 3800, weeks: 26,
-      note: "Árbol emblemático de paisajismo urbano." },
+      note: "Árbol emblemático de paisajismo urbano.",
+      rentable: true, rent: { price: 780, weeks: 1 },
+      rentNote: "Sale de nuestro inventario: entrega, maniobra y recolección al día siguiente del evento." },
     { id: "olivo", name: "Olivo ornamental (maceta grande)", cat: "Árboles y ejemplares", price: 6500, weeks: 20,
-      note: "Uso frecuente en entradas de hoteles boutique." },
+      note: "Uso frecuente en entradas de hoteles boutique.",
+      rentable: true, rent: { price: 1300, weeks: 1 },
+      rentNote: "Sale de nuestro inventario: entrega, maniobra y recolección al día siguiente del evento." },
     { id: "naranjo", name: "Naranjo (ejemplar)", cat: "Árboles y ejemplares", price: 3200, weeks: 20,
-      note: "Solicitado en jardines y eventos por su follaje y aroma." },
+      note: "Solicitado en jardines y eventos por su follaje y aroma.",
+      rentable: true, rent: { price: 650, weeks: 1 },
+      rentNote: "Sale de nuestro inventario: entrega, maniobra y recolección al día siguiente del evento." },
   ];
 
   const PROJECT_LABELS = {
@@ -609,15 +683,23 @@
   const money = n => "$" + Math.round(n).toLocaleString("es-MX");
   const normalize = s => s.normalize("NFD").replace(/[\u0300-\u036f]/g, "").toLowerCase().trim();
 
-  const cart = {}; // id -> qty
+  const cart = {}; // "plantId::mode" -> qty
   let state = { company: "", projectType: "jardin", targetDate: "", started: false, logistics: false };
   let dropdownItems = [];
   let hiIndex = -1;
+  let currentMode = "buy";
 
   function leadBadge(weeks) {
     if (weeks <= 2) return { cls: "fast", label: weeks + " sem" };
     if (weeks <= 6) return { cls: "mid", label: weeks + " sem" };
     return { cls: "slow", label: weeks + " sem" };
+  }
+
+  function lineInfo(mode, plant) {
+    if (mode === "rent" && plant.rentable) {
+      return { unitPrice: plant.rent.price, unitWeeks: plant.rent.weeks };
+    }
+    return { unitPrice: plant.price, unitWeeks: plant.weeks };
   }
 
   /* ---------- persistence ---------- */
@@ -696,8 +778,9 @@
     } else {
       dd.innerHTML = dropdownItems.map((p, i) => {
         const badge = leadBadge(p.weeks);
+        const rentTag = p.rentable ? '<span class="tag-rent">rentable</span>' : "";
         return `<div class="combo-item" data-idx="${i}">
-          <span class="ci-name">${escapeHtml(p.name)}</span>
+          <span class="ci-name">${escapeHtml(p.name)} ${rentTag}</span>
           <span class="ci-meta">${money(p.price)} · ${badge.label}</span>
         </div>`;
       }).join("");
@@ -715,13 +798,59 @@
     document.getElementById("comboDropdown").classList.remove("open");
   }
 
+  function updateModeUI(plant) {
+    const toggle = document.getElementById("modeToggle");
+    const noteEl = document.getElementById("rentNote");
+    if (!plant || !plant.rentable) {
+      toggle.style.display = "none";
+      noteEl.style.display = "none";
+      currentMode = "buy";
+      return;
+    }
+    currentMode = state.projectType === "evento" ? "rent" : "buy";
+    document.getElementById("modeMetaBuy").textContent = `${money(plant.price)} · ${plant.weeks} sem`;
+    document.getElementById("modeMetaRent").textContent = `${money(plant.rent.price)} · ${plant.rent.weeks} sem`;
+    toggle.querySelectorAll(".mode-btn").forEach(btn => {
+      btn.classList.toggle("active", btn.dataset.mode === currentMode);
+    });
+    toggle.style.display = "flex";
+    noteEl.style.display = currentMode === "rent" ? "block" : "none";
+    noteEl.textContent = plant.rentNote || "";
+  }
+
+  document.getElementById("modeToggle").addEventListener("click", (e) => {
+    const btn = e.target.closest(".mode-btn");
+    if (!btn) return;
+    currentMode = btn.dataset.mode;
+    const plant = resolvePlant(document.getElementById("plantSearch").value);
+    document.querySelectorAll(".mode-btn").forEach(b => b.classList.toggle("active", b === btn));
+    const noteEl = document.getElementById("rentNote");
+    if (plant && currentMode === "rent") {
+      noteEl.style.display = "block";
+      noteEl.textContent = plant.rentNote || "";
+    } else {
+      noteEl.style.display = "none";
+    }
+  });
+
   function selectPlant(plant) {
     const input = document.getElementById("plantSearch");
     input.value = plant.name;
     closeDropdown();
+    updateModeUI(plant);
     const qtyInput = document.getElementById("qtyInput");
     qtyInput.focus();
     qtyInput.select();
+  }
+
+  function resolvePlant(text) {
+    const q = normalize(text);
+    let plant = PLANTS.find(p => normalize(p.name) === q);
+    if (!plant) {
+      const matches = PLANTS.filter(p => q !== "" && normalize(p.name).includes(q));
+      if (matches.length === 1) plant = matches[0];
+    }
+    return plant || null;
   }
 
   function highlightItem(idx) {
@@ -732,8 +861,18 @@
 
   const plantSearchEl = document.getElementById("plantSearch");
   plantSearchEl.addEventListener("focus", () => renderDropdown(plantSearchEl.value));
-  plantSearchEl.addEventListener("input", () => renderDropdown(plantSearchEl.value));
-  plantSearchEl.addEventListener("blur", () => setTimeout(closeDropdown, 120));
+  plantSearchEl.addEventListener("input", () => {
+    renderDropdown(plantSearchEl.value);
+    updateModeUI(null);
+  });
+  plantSearchEl.addEventListener("blur", () => {
+    setTimeout(() => {
+      closeDropdown();
+      if (document.getElementById("modeToggle").style.display === "none") {
+        updateModeUI(resolvePlant(plantSearchEl.value));
+      }
+    }, 120);
+  });
   plantSearchEl.addEventListener("keydown", (e) => {
     const dd = document.getElementById("comboDropdown");
     if (!dd.classList.contains("open")) return;
@@ -763,12 +902,7 @@
   function addItem() {
     const input = document.getElementById("plantSearch");
     const errEl = document.getElementById("addError");
-    const q = normalize(input.value);
-    let plant = PLANTS.find(p => normalize(p.name) === q);
-    if (!plant) {
-      const matches = PLANTS.filter(p => q !== "" && normalize(p.name).includes(q));
-      if (matches.length === 1) plant = matches[0];
-    }
+    const plant = resolvePlant(input.value);
     if (!plant) {
       errEl.textContent = input.value.trim()
         ? "No encontramos esa planta en el catálogo. Elige una opción de la lista."
@@ -778,14 +912,17 @@
     }
     errEl.style.display = "none";
 
+    const mode = plant.rentable ? currentMode : "buy";
+    const key = `${plant.id}::${mode}`;
     const qtyInput = document.getElementById("qtyInput");
     const qty = Math.max(1, Math.min(9999, Math.round(Number(qtyInput.value) || 1)));
-    cart[plant.id] = (cart[plant.id] || 0) + qty;
+    cart[key] = (cart[key] || 0) + qty;
 
     input.value = "";
     qtyInput.value = "1";
     input.focus();
     closeDropdown();
+    updateModeUI(null);
     saveState();
     renderManifest();
   }
@@ -807,9 +944,9 @@
     return date.toLocaleDateString("es-MX", { day: "numeric", month: "long", year: "numeric" });
   }
 
-  function setQty(id, n) {
+  function setQty(key, n) {
     n = Math.max(0, Math.min(9999, Math.round(Number(n) || 0)));
-    if (n > 0) cart[id] = n; else delete cart[id];
+    if (n > 0) cart[key] = n; else delete cart[key];
     saveState();
     renderManifest();
   }
@@ -817,13 +954,13 @@
   function renderManifest() {
     document.getElementById("logisticsToggle").checked = state.logistics;
 
-    const ids = Object.keys(cart).filter(id => cart[id] > 0);
+    const keys = Object.keys(cart).filter(key => cart[key] > 0);
     const linesEl = document.getElementById("lines");
     const totalsEl = document.getElementById("totals");
     const etaEl = document.getElementById("etaBlock");
-    document.getElementById("itemCount").textContent = ids.length + (ids.length === 1 ? " línea" : " líneas");
+    document.getElementById("itemCount").textContent = keys.length + (keys.length === 1 ? " línea" : " líneas");
 
-    if (ids.length === 0) {
+    if (keys.length === 0) {
       linesEl.innerHTML = '<p class="empty-hint">Agrega tu primera planta arriba.</p>';
       totalsEl.style.display = "none";
       etaEl.style.display = "none";
@@ -832,22 +969,25 @@
 
     let subtotal = 0, discount = 0, totalUnits = 0, maxWeeks = 0, bottleneck = null;
 
-    const lineHtml = ids.map(id => {
-      const p = PLANTS.find(pl => pl.id === id);
-      const qty = cart[id];
-      const lineSubtotal = p.price * qty;
+    const lineHtml = keys.map(key => {
+      const [plantId, mode] = key.split("::");
+      const p = PLANTS.find(pl => pl.id === plantId);
+      const { unitPrice, unitWeeks } = lineInfo(mode, p);
+      const qty = cart[key];
+      const lineSubtotal = unitPrice * qty;
       const rate = volumeDiscountRate(qty);
       const lineDiscount = lineSubtotal * rate;
       subtotal += lineSubtotal;
       discount += lineDiscount;
       totalUnits += qty;
-      if (p.weeks > maxWeeks) { maxWeeks = p.weeks; bottleneck = p; }
-      const badge = leadBadge(p.weeks);
+      if (unitWeeks > maxWeeks) { maxWeeks = unitWeeks; bottleneck = { name: p.name, mode }; }
+      const badge = leadBadge(unitWeeks);
+      const modeTag = mode === "rent" ? '<span class="tag-rent">renta evento</span>' : "";
       return `
-        <div class="line-item" data-id="${id}">
+        <div class="line-item" data-key="${key}">
           <div class="li-main">
             <div class="li-name">${escapeHtml(p.name)}</div>
-            <div class="li-sub"><span class="badge ${badge.cls}">${badge.label}</span><span>${p.cat}</span></div>
+            <div class="li-sub"><span class="badge ${badge.cls}">${badge.label}</span><span>${p.cat}</span>${modeTag}</div>
           </div>
           <div class="stepper">
             <button data-act="dec" aria-label="Quitar una unidad de ${escapeHtml(p.name)}">−</button>
@@ -855,7 +995,7 @@
             <button data-act="inc" aria-label="Agregar una unidad de ${escapeHtml(p.name)}">+</button>
           </div>
           <div class="li-total">${money(lineSubtotal - lineDiscount)}</div>
-          <button class="li-remove" data-remove="${id}" aria-label="Quitar ${escapeHtml(p.name)}">✕</button>
+          <button class="li-remove" data-remove="${key}" aria-label="Quitar ${escapeHtml(p.name)}">✕</button>
         </div>`;
     }).join("");
 
@@ -864,11 +1004,11 @@
       btn.addEventListener("click", () => { delete cart[btn.dataset.remove]; saveState(); renderManifest(); });
     });
     linesEl.querySelectorAll(".line-item").forEach(row => {
-      const id = row.dataset.id;
+      const key = row.dataset.key;
       const input = row.querySelector('[data-role="qty"]');
-      row.querySelector('[data-act="inc"]').addEventListener("click", () => setQty(id, (cart[id] || 0) + 1));
-      row.querySelector('[data-act="dec"]').addEventListener("click", () => setQty(id, (cart[id] || 0) - 1));
-      input.addEventListener("change", () => setQty(id, input.value));
+      row.querySelector('[data-act="inc"]').addEventListener("click", () => setQty(key, (cart[key] || 0) + 1));
+      row.querySelector('[data-act="dec"]').addEventListener("click", () => setQty(key, (cart[key] || 0) - 1));
+      input.addEventListener("change", () => setQty(key, input.value));
     });
 
     const logisticsOn = document.getElementById("logisticsToggle").checked;
@@ -902,9 +1042,10 @@
     ready.setDate(ready.getDate() + totalWeeks * 7);
     const readyStr = formatDate(ready);
 
+    const bottleneckLabel = bottleneck.mode === "rent" ? `${bottleneck.name} (renta)` : bottleneck.name;
     const whyText = volumeBuffer > 0
-      ? `Cuello de botella: ${bottleneck.name} (${maxWeeks} sem) + ${volumeBuffer} sem de logística por volumen (${totalUnits} unidades).`
-      : `Cuello de botella: ${bottleneck.name}, la especie más lenta del pedido (${maxWeeks} sem).`;
+      ? `Cuello de botella: ${bottleneckLabel} (${maxWeeks} sem) + ${volumeBuffer} sem de logística por volumen (${totalUnits} unidades).`
+      : `Cuello de botella: ${bottleneckLabel}, la especie más lenta del pedido (${maxWeeks} sem).`;
 
     const etaTargetEl = document.getElementById("etaTarget");
     let onTime = totalWeeks <= 3;
@@ -939,6 +1080,7 @@
     Object.keys(cart).forEach(k => delete cart[k]);
     document.getElementById("qtyInput").value = "1";
     document.getElementById("plantSearch").value = "";
+    updateModeUI(null);
     saveState();
     renderManifest();
   });
