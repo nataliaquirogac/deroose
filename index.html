@@ -140,7 +140,7 @@
     margin-bottom: 5px;
   }
 
-  .field input[type="text"], .field input[type="date"], .field select {
+  .field input[type="text"], .field input[type="password"], .field input[type="date"], .field select {
     width: 100%;
     padding: 9px 11px;
     border: 1px solid var(--line);
@@ -395,6 +395,7 @@
     display: flex;
     align-items: center;
     gap: 6px;
+    flex-wrap: wrap;
     margin-top: 3px;
     font-size: 0.74rem;
     color: var(--muted);
@@ -498,6 +499,166 @@
     font-size: 0.8rem;
   }
 
+  .action-row {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+    margin-top: 4px;
+  }
+
+  /* ---------- auth / navigation ---------- */
+
+  .session-bar {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    font-family: "IBM Plex Mono", monospace;
+    font-size: 0.7rem;
+    letter-spacing: 0.04em;
+    text-transform: uppercase;
+    color: var(--muted);
+    padding: 10px 0;
+    border-bottom: 1px solid var(--line);
+    margin-bottom: 18px;
+  }
+  .session-bar .role-badge { color: var(--accent); font-weight: 600; }
+  .session-bar .link-btn { text-transform: none; letter-spacing: 0; font-family: "Archivo", sans-serif; font-size: 0.8rem; }
+
+  .tabs { display: flex; gap: 8px; margin-bottom: 22px; flex-wrap: wrap; }
+  .tab-btn {
+    font-family: "Archivo", sans-serif;
+    font-size: 0.85rem;
+    font-weight: 500;
+    padding: 8px 14px;
+    border-radius: 999px;
+    border: 1px solid var(--line);
+    background: var(--paper-raised);
+    color: var(--muted);
+    cursor: pointer;
+  }
+  .tab-btn.active { background: var(--accent); color: var(--accent-ink); border-color: var(--accent); }
+
+  .login-wrap { min-height: 55vh; display: flex; align-items: center; justify-content: center; padding: 32px 0; }
+  .login-card { max-width: 380px; width: 100%; margin-bottom: 0; }
+  .role-toggle { display: flex; gap: 8px; margin-bottom: 14px; }
+  .role-toggle button {
+    flex: 1;
+    padding: 10px;
+    border-radius: 8px;
+    border: 1px solid var(--line);
+    background: var(--paper);
+    color: var(--ink);
+    font-family: "Archivo", sans-serif;
+    font-weight: 500;
+    font-size: 0.88rem;
+    cursor: pointer;
+  }
+  .role-toggle button.active {
+    border-color: var(--accent);
+    background: color-mix(in srgb, var(--accent) 12%, var(--paper));
+    color: var(--accent);
+  }
+
+  .status-pill {
+    font-family: "IBM Plex Mono", monospace;
+    font-size: 0.66rem;
+    letter-spacing: 0.03em;
+    text-transform: uppercase;
+    padding: 3px 8px;
+    border-radius: 999px;
+    white-space: nowrap;
+  }
+  .status-pill.pending { background: var(--line); color: var(--muted); }
+  .status-pill.progress { background: var(--gold-soft); color: var(--gold); }
+  .status-pill.done { background: color-mix(in srgb, var(--accent) 18%, var(--paper-raised)); color: var(--accent); }
+
+  .status-select {
+    font-family: "IBM Plex Mono", monospace;
+    font-size: 0.74rem;
+    padding: 5px 8px;
+    border-radius: 6px;
+    border: 1px solid var(--line);
+    background: var(--paper);
+    color: var(--ink);
+  }
+
+  .order-card {
+    border: 1px solid var(--line);
+    border-radius: 10px;
+    padding: 14px 16px;
+    margin-bottom: 12px;
+    background: var(--paper-raised);
+  }
+  .order-head { display: flex; justify-content: space-between; align-items: center; gap: 10px; flex-wrap: wrap; margin-bottom: 6px; }
+  .order-num { font-family: "IBM Plex Mono", monospace; font-weight: 600; font-size: 0.92rem; }
+  .order-meta { font-size: 0.8rem; color: var(--muted); }
+  .order-items { font-size: 0.82rem; color: var(--ink); border-top: 1px dashed var(--line); padding-top: 8px; margin-top: 10px; }
+  .order-items .oi-row { display: flex; justify-content: space-between; gap: 8px; padding: 3px 0; }
+  .order-items .oi-row .oi-sku { font-family: "IBM Plex Mono", monospace; font-size: 0.72rem; color: var(--muted); white-space: nowrap; }
+
+  .table-scroll { overflow-x: auto; }
+  .admin-table { width: 100%; border-collapse: collapse; font-size: 0.85rem; }
+  .admin-table th {
+    text-align: left;
+    font-family: "IBM Plex Mono", monospace;
+    font-size: 0.66rem;
+    text-transform: uppercase;
+    letter-spacing: 0.04em;
+    color: var(--muted);
+    padding: 8px 10px;
+    border-bottom: 1px solid var(--line);
+    white-space: nowrap;
+  }
+  .admin-table td { padding: 8px 10px; border-bottom: 1px solid var(--line); vertical-align: middle; white-space: nowrap; }
+  .admin-table input[type="text"] {
+    width: 100%;
+    min-width: 150px;
+    padding: 6px 8px;
+    border: 1px solid var(--line);
+    border-radius: 6px;
+    background: var(--paper);
+    color: var(--ink);
+    font-family: "IBM Plex Mono", monospace;
+    font-size: 0.78rem;
+  }
+  .admin-table .cat-td { color: var(--muted); font-size: 0.78rem; white-space: normal; }
+
+  .cal-toolbar { display: flex; align-items: center; justify-content: space-between; margin-bottom: 14px; }
+  .cal-toolbar .cal-title { font-family: "Fraunces", Georgia, serif; font-size: 1.15rem; font-weight: 500; }
+  .cal-nav-btn {
+    width: 32px; height: 32px; border-radius: 8px; border: 1px solid var(--line);
+    background: var(--paper); color: var(--ink); cursor: pointer; font-size: 1rem; line-height: 1;
+  }
+  .cal-nav-btn:hover { border-color: var(--accent); color: var(--accent); }
+  .cal-grid { display: grid; grid-template-columns: repeat(7, 1fr); gap: 5px; }
+  .cal-dow { font-family: "IBM Plex Mono", monospace; font-size: 0.62rem; text-transform: uppercase; color: var(--muted); text-align: center; padding-bottom: 4px; }
+  .cal-cell {
+    min-height: 60px;
+    min-width: 0;
+    border: 1px solid var(--line);
+    border-radius: 8px;
+    padding: 5px;
+    background: var(--paper-raised);
+    cursor: pointer;
+    display: flex;
+    flex-direction: column;
+    gap: 3px;
+    overflow: hidden;
+  }
+  .cal-cell.blank { visibility: hidden; cursor: default; }
+  .cal-cell:hover { border-color: var(--accent); }
+  .cal-cell.selected { border-color: var(--accent); box-shadow: 0 0 0 1px var(--accent); }
+  .cal-cell .cal-daynum { font-family: "IBM Plex Mono", monospace; font-size: 0.72rem; color: var(--muted); }
+  .cal-dot-row { display: flex; gap: 3px; flex-wrap: wrap; min-width: 0; }
+  .cal-dot { font-family: "IBM Plex Mono", monospace; font-size: 0.58rem; padding: 1px 4px; border-radius: 4px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; max-width: 100%; }
+  .cal-dot.req { background: color-mix(in srgb, var(--accent) 18%, var(--paper-raised)); color: var(--accent); }
+  .cal-dot.res { background: var(--gold-soft); color: var(--gold); }
+
+  .day-detail { margin-top: 16px; }
+  .day-detail h3 { font-family: "Fraunces", Georgia, serif; font-size: 1.02rem; font-weight: 500; margin: 0 0 10px; }
+  .day-detail-row { display: flex; justify-content: space-between; gap: 8px; padding: 6px 0; border-bottom: 1px solid var(--line); font-size: 0.84rem; }
+  .day-detail-row:last-child { border-bottom: none; }
+
   footer.disclaimer {
     margin-top: 32px;
     padding-top: 16px;
@@ -516,6 +677,8 @@
   @media (max-width: 480px) {
     .line-item { flex-wrap: wrap; }
     .li-head { flex: 1 1 100%; }
+    .cal-cell { min-height: 46px; padding: 4px; }
+    .cal-dot { font-size: 0.54rem; }
   }
 
   @media (prefers-reduced-motion: reduce) {
@@ -525,101 +688,212 @@
 
 <div class="wrap">
 
-  <header class="top">
-    <p class="brand-eyebrow">Deroose México</p>
-    <h1 class="title">Deroose Planner</h1>
-    <p class="top-note">
-      Cotizador de plantas ornamentales. Ruta de suministro Miami–México vía
-      <b>AI Mayan Enterprises LLC</b>. Dinos para qué es tu proyecto y ve armando
-      tu pedido planta por planta: te decimos cuánto cuesta y para cuándo está listo.
-    </p>
-  </header>
-
-  <section class="card" id="step1">
-    <h2>Antes de empezar</h2>
-
-    <div class="field">
-      <label for="companyName">Empresa o cliente</label>
-      <input type="text" id="companyName" placeholder="Ej. Fraccionamiento Los Encinos">
-    </div>
-
-    <div class="field">
-      <label for="projectType">Tipo de proyecto</label>
-      <select id="projectType">
-        <option value="jardin">Jardín residencial</option>
-        <option value="paisajismo">Paisajismo comercial / desarrollo</option>
-        <option value="hoteleria">Hotelería</option>
-        <option value="evento">Evento / boda</option>
-        <option value="diseno">Florería de diseño</option>
-      </select>
-    </div>
-
-    <div class="field">
-      <label for="targetDate">Fecha en que lo necesitas (opcional)</label>
-      <input type="date" id="targetDate">
-    </div>
-
-    <p class="error-msg" id="step1Error" style="display:none;">Escribe el nombre de tu empresa o cliente para continuar.</p>
-    <button class="btn primary block" id="startBtn">Comenzar cotización</button>
-  </section>
-
-  <section id="step2" style="display:none;">
-
-    <div class="context-bar">
-      <span id="contextLabel"></span>
-      <button class="link-btn" id="editContextBtn">Editar datos</button>
-    </div>
-
-    <div class="card">
-      <h2>Agregar planta</h2>
-      <div class="add-row">
-        <div class="combo">
-          <input type="text" id="plantSearch" autocomplete="off" placeholder="Escribe el nombre… ej. jazmín, filodendro, encino">
-          <div class="combo-dropdown" id="comboDropdown"></div>
+  <div id="loginScreen">
+    <div class="login-wrap">
+      <div class="card login-card">
+        <p class="brand-eyebrow">Deroose México</p>
+        <h1 class="title" style="font-size: 1.6rem;">Deroose Planner</h1>
+        <p class="top-note">Inicia sesión para cotizar plantas o para administrar el calendario de producción.</p>
+        <div class="role-toggle" style="margin-top: 16px;">
+          <button type="button" data-role="cliente" class="active">Cliente</button>
+          <button type="button" data-role="admin">Admin</button>
         </div>
-        <input type="text" inputmode="numeric" id="qtyInput" value="1" aria-label="Cantidad">
-        <button class="btn primary" id="addBtn">Agregar</button>
-      </div>
-      <div class="mode-toggle" id="modeToggle" style="display:none;">
-        <button type="button" class="mode-btn" data-mode="buy">
-          <span class="mode-title">Comprar</span>
-          <span class="mode-meta" id="modeMetaBuy"></span>
-        </button>
-        <button type="button" class="mode-btn" data-mode="rent">
-          <span class="mode-title">Rentar para el evento</span>
-          <span class="mode-meta" id="modeMetaRent"></span>
-        </button>
-      </div>
-      <p class="rent-note" id="rentNote" style="display:none;"></p>
-      <p class="error-msg" id="addError" style="display:none;"></p>
-    </div>
-
-    <div class="card">
-      <h2>Tu pedido <span class="count" id="itemCount">0 líneas</span></h2>
-      <div id="lines"><p class="empty-hint">Agrega tu primera planta arriba.</p></div>
-
-      <label class="checkline">
-        <input type="checkbox" id="logisticsToggle">
-        Incluir flete, maniobras y montaje (+15%)
-      </label>
-
-      <div class="totals" id="totals" style="display:none;">
-        <div class="row"><span>Subtotal</span><span id="subtotalOut">$0</span></div>
-        <div class="row discount" id="discountRow" style="display:none;"><span>Descuento por volumen</span><span id="discountOut">$0</span></div>
-        <div class="row" id="logisticsRow" style="display:none;"><span>Flete y montaje</span><span id="logisticsOut">$0</span></div>
-        <div class="row grand"><span>Total</span><span id="totalOut">$0</span></div>
+        <div class="field">
+          <label for="loginPassword">Contraseña</label>
+          <input type="password" id="loginPassword" placeholder="••••••••">
+        </div>
+        <p class="error-msg" id="loginError" style="display:none;"></p>
+        <button class="btn primary block" id="loginBtn">Entrar</button>
+        <p class="rent-note">Demo local: cliente y admin comparten los datos guardados en este navegador. No hay servidor ni base de datos real detrás de estas cuentas.</p>
       </div>
     </div>
+  </div>
 
-    <div class="card eta-block" id="etaBlock" style="display:none;">
-      <div class="eta-label" id="etaLabel">Fecha estimada de entrega</div>
-      <div class="eta-date" id="etaDate"></div>
-      <div class="eta-why" id="etaWhy"></div>
-      <div class="eta-target" id="etaTarget" style="display:none;"></div>
+  <div id="appCliente" style="display:none;">
+
+    <div class="session-bar">
+      <span>Sesión: <span class="role-badge">Cliente</span></span>
+      <button class="link-btn" id="logoutBtnCliente">Cerrar sesión</button>
     </div>
 
-    <button class="btn ghost block" id="resetBtn">Reiniciar cotización</button>
-  </section>
+    <header class="top">
+      <p class="brand-eyebrow">Deroose México</p>
+      <h1 class="title">Deroose Planner</h1>
+      <p class="top-note">
+        Cotizador de plantas ornamentales. Ruta de suministro Miami–México vía
+        <b>AI Mayan Enterprises LLC</b>. Dinos para qué es tu proyecto y ve armando
+        tu pedido planta por planta: te decimos cuánto cuesta y para cuándo está listo.
+      </p>
+    </header>
+
+    <nav class="tabs" id="clientTabs">
+      <button type="button" class="tab-btn active" data-tab="cotizador">Cotizador</button>
+      <button type="button" class="tab-btn" data-tab="pedidos">Mis pedidos</button>
+    </nav>
+
+    <div id="viewCotizador">
+
+      <section class="card" id="step1">
+        <h2>Antes de empezar</h2>
+
+        <div class="field">
+          <label for="companyName">Empresa o cliente</label>
+          <input type="text" id="companyName" placeholder="Ej. Fraccionamiento Los Encinos">
+        </div>
+
+        <div class="field">
+          <label for="projectType">Tipo de proyecto</label>
+          <select id="projectType">
+            <option value="jardin">Jardín residencial</option>
+            <option value="paisajismo">Paisajismo comercial / desarrollo</option>
+            <option value="hoteleria">Hotelería</option>
+            <option value="evento">Evento / boda</option>
+            <option value="diseno">Florería de diseño</option>
+          </select>
+        </div>
+
+        <div class="field">
+          <label for="targetDate">Fecha en que lo necesitas</label>
+          <input type="date" id="targetDate">
+        </div>
+
+        <p class="error-msg" id="step1Error" style="display:none;">Escribe el nombre de tu empresa o cliente para continuar.</p>
+        <button class="btn primary block" id="startBtn">Comenzar cotización</button>
+      </section>
+
+      <section id="step2" style="display:none;">
+
+        <div class="context-bar">
+          <span id="contextLabel"></span>
+          <button class="link-btn" id="editContextBtn">Editar datos</button>
+        </div>
+
+        <div class="card">
+          <h2>Agregar planta</h2>
+          <div class="add-row">
+            <div class="combo">
+              <input type="text" id="plantSearch" autocomplete="off" placeholder="Escribe el nombre… ej. jazmín, filodendro, encino">
+              <div class="combo-dropdown" id="comboDropdown"></div>
+            </div>
+            <input type="text" inputmode="numeric" id="qtyInput" value="1" aria-label="Cantidad">
+            <button class="btn primary" id="addBtn">Agregar</button>
+          </div>
+          <div class="mode-toggle" id="modeToggle" style="display:none;">
+            <button type="button" class="mode-btn" data-mode="buy">
+              <span class="mode-title">Comprar</span>
+              <span class="mode-meta" id="modeMetaBuy"></span>
+            </button>
+            <button type="button" class="mode-btn" data-mode="rent">
+              <span class="mode-title">Rentar para el evento</span>
+              <span class="mode-meta" id="modeMetaRent"></span>
+            </button>
+          </div>
+          <p class="rent-note" id="rentNote" style="display:none;"></p>
+          <p class="error-msg" id="addError" style="display:none;"></p>
+        </div>
+
+        <div class="card">
+          <h2>Tu pedido <span class="count" id="itemCount">0 líneas</span></h2>
+          <div id="lines"><p class="empty-hint">Agrega tu primera planta arriba.</p></div>
+
+          <label class="checkline">
+            <input type="checkbox" id="logisticsToggle">
+            Incluir flete, maniobras y montaje (+15%)
+          </label>
+
+          <div class="totals" id="totals" style="display:none;">
+            <div class="row"><span>Subtotal</span><span id="subtotalOut">$0</span></div>
+            <div class="row discount" id="discountRow" style="display:none;"><span>Descuento por volumen</span><span id="discountOut">$0</span></div>
+            <div class="row" id="logisticsRow" style="display:none;"><span>Flete y montaje</span><span id="logisticsOut">$0</span></div>
+            <div class="row grand"><span>Total</span><span id="totalOut">$0</span></div>
+          </div>
+        </div>
+
+        <div class="card eta-block" id="etaBlock" style="display:none;">
+          <div class="eta-label" id="etaLabel">Fecha estimada de entrega</div>
+          <div class="eta-date" id="etaDate"></div>
+          <div class="eta-why" id="etaWhy"></div>
+          <div class="eta-target" id="etaTarget" style="display:none;"></div>
+        </div>
+
+        <div class="action-row">
+          <p class="error-msg" id="orderError" style="display:none;"></p>
+          <button class="btn primary block" id="confirmOrderBtn">Confirmar y enviar orden de compra</button>
+          <button class="btn ghost block" id="resetBtn">Reiniciar cotización</button>
+        </div>
+      </section>
+
+    </div>
+
+    <div id="viewPedidos" style="display:none;">
+      <div class="card">
+        <h2>Mis pedidos</h2>
+        <div id="misPedidosList"><p class="empty-hint">Cargando…</p></div>
+      </div>
+    </div>
+
+  </div>
+
+  <div id="appAdmin" style="display:none;">
+
+    <div class="session-bar">
+      <span>Sesión: <span class="role-badge">Admin</span></span>
+      <button class="link-btn" id="logoutBtnAdmin">Cerrar sesión</button>
+    </div>
+
+    <header class="top">
+      <p class="brand-eyebrow">Deroose México</p>
+      <h1 class="title">Deroose Planner</h1>
+      <p class="top-note">
+        Panel administrativo: calendario de producción y renta, catálogo con SKU, y seguimiento
+        de las órdenes de compra que confirman los clientes.
+      </p>
+    </header>
+
+    <nav class="tabs" id="adminTabs">
+      <button type="button" class="tab-btn active" data-tab="calendario">Calendario</button>
+      <button type="button" class="tab-btn" data-tab="catalogo">Catálogo</button>
+      <button type="button" class="tab-btn" data-tab="ordenes">Órdenes</button>
+    </nav>
+
+    <div id="viewCalendario">
+      <div class="card">
+        <div class="cal-toolbar">
+          <button class="cal-nav-btn" id="calPrev" aria-label="Mes anterior">‹</button>
+          <span class="cal-title" id="calTitle"></span>
+          <button class="cal-nav-btn" id="calNext" aria-label="Mes siguiente">›</button>
+        </div>
+        <div class="cal-grid" id="calGrid"></div>
+        <div class="day-detail" id="dayDetail"></div>
+      </div>
+      <p class="rent-note">
+        <b>Requerido</b> = compra que debe estar lista ese día. <b>Apartado</b> = renta reservada
+        desde 3 días antes hasta 3 días después de la fecha del evento.
+      </p>
+    </div>
+
+    <div id="viewCatalogo" style="display:none;">
+      <div class="card">
+        <h2>Catálogo y SKU</h2>
+        <div class="table-scroll">
+          <table class="admin-table">
+            <thead>
+              <tr><th></th><th>Planta</th><th>Categoría</th><th>SKU</th><th>Precio</th><th>Semanas</th></tr>
+            </thead>
+            <tbody id="catalogBody"></tbody>
+          </table>
+        </div>
+      </div>
+    </div>
+
+    <div id="viewOrdenes" style="display:none;">
+      <div class="card">
+        <h2>Órdenes de clientes</h2>
+        <div id="ordersAdminList"><p class="empty-hint">Cargando…</p></div>
+      </div>
+    </div>
+
+  </div>
 
   <footer class="disclaimer">
     Precios de referencia por unidad y tiempos de disponibilidad estimados a partir de hallazgos
@@ -697,6 +971,21 @@
     diseno: "Florería de diseño",
   };
 
+  const CREDENTIALS = { cliente: "cliente123", admin: "admin123" };
+
+  const SKU_PREFIX = {
+    "Piso atemporal": "ATP",
+    "De temporada": "TMP",
+    "Follaje de moda": "FOL",
+    "Alta demanda, oferta lenta": "ESC",
+    "Coleccionista / variedad rara": "COL",
+    "Árboles y ejemplares": "ARB",
+  };
+
+  const STATUS_OPTIONS = ["Recibido", "Confirmado", "En producción", "Listo para entrega", "Entregado"];
+  const MONTH_NAMES = ["Enero","Febrero","Marzo","Abril","Mayo","Junio","Julio","Agosto","Septiembre","Octubre","Noviembre","Diciembre"];
+  const DOW = ["L","M","M","J","V","S","D"];
+
   const money = n => "$" + Math.round(n).toLocaleString("es-MX");
   const normalize = s => s.normalize("NFD").replace(/[\u0300-\u036f]/g, "").toLowerCase().trim();
 
@@ -705,6 +994,9 @@
   let dropdownItems = [];
   let hiIndex = -1;
   let currentMode = "buy";
+  let auth = { role: null };
+  let loginRole = "cliente";
+  let calState = { year: (new Date()).getFullYear(), month: (new Date()).getMonth(), selected: null };
 
   function leadBadge(weeks) {
     if (weeks <= 2) return { cls: "fast", label: weeks + " sem" };
@@ -717,6 +1009,10 @@
       return { unitPrice: plant.rent.price, unitWeeks: plant.rent.weeks };
     }
     return { unitPrice: plant.price, unitWeeks: plant.weeks };
+  }
+
+  function escapeHtml(s) {
+    return s.replace(/[&<>"']/g, c => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;" }[c]));
   }
 
   /* ---------- product icons ----------
@@ -765,7 +1061,34 @@
     return template(shadeFor(plant.id));
   }
 
-  /* ---------- persistence ---------- */
+  /* ---------- SKU ---------- */
+
+  function defaultSku(plant) { return `${SKU_PREFIX[plant.cat] || "GEN"}-${plant.id.toUpperCase()}`; }
+  function loadSkus() { try { return JSON.parse(localStorage.getItem("deroose-planner-skus") || "{}"); } catch (e) { return {}; } }
+  function saveSkus(map) { try { localStorage.setItem("deroose-planner-skus", JSON.stringify(map)); } catch (e) { /* ignore */ } }
+  function getSku(plantId) {
+    const plant = PLANTS.find(p => p.id === plantId);
+    const overrides = loadSkus();
+    return overrides[plantId] || defaultSku(plant);
+  }
+
+  /* ---------- orders ---------- */
+
+  function loadOrders() { try { return JSON.parse(localStorage.getItem("deroose-planner-orders") || "[]"); } catch (e) { return []; } }
+  function saveOrders(orders) { try { localStorage.setItem("deroose-planner-orders", JSON.stringify(orders)); } catch (e) { /* ignore */ } }
+  function nextOrderNumber() {
+    let seq = 1;
+    try { seq = Number(localStorage.getItem("deroose-planner-order-seq") || "0") + 1; } catch (e) { /* ignore */ }
+    try { localStorage.setItem("deroose-planner-order-seq", String(seq)); } catch (e) { /* ignore */ }
+    return `DP-${(new Date()).getFullYear()}-${String(seq).padStart(4, "0")}`;
+  }
+  function statusClass(s) {
+    if (s === "Entregado" || s === "Listo para entrega") return "done";
+    if (s === "Confirmado" || s === "En producción") return "progress";
+    return "pending";
+  }
+
+  /* ---------- persistence (quote in progress) ---------- */
 
   function saveState() {
     try {
@@ -823,10 +1146,6 @@
   });
 
   /* ---------- combobox ---------- */
-
-  function escapeHtml(s) {
-    return s.replace(/[&<>"']/g, c => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;" }[c]));
-  }
 
   function renderDropdown(query) {
     const dd = document.getElementById("comboDropdown");
@@ -1015,25 +1334,10 @@
     renderManifest();
   }
 
-  function renderManifest() {
-    document.getElementById("logisticsToggle").checked = state.logistics;
-
+  function computeCart() {
     const keys = Object.keys(cart).filter(key => cart[key] > 0);
-    const linesEl = document.getElementById("lines");
-    const totalsEl = document.getElementById("totals");
-    const etaEl = document.getElementById("etaBlock");
-    document.getElementById("itemCount").textContent = keys.length + (keys.length === 1 ? " línea" : " líneas");
-
-    if (keys.length === 0) {
-      linesEl.innerHTML = '<p class="empty-hint">Agrega tu primera planta arriba.</p>';
-      totalsEl.style.display = "none";
-      etaEl.style.display = "none";
-      return;
-    }
-
     let subtotal = 0, discount = 0, totalUnits = 0, maxWeeks = 0, bottleneck = null;
-
-    const lineHtml = keys.map(key => {
+    const items = keys.map(key => {
       const [plantId, mode] = key.split("::");
       const p = PLANTS.find(pl => pl.id === plantId);
       const { unitPrice, unitWeeks } = lineInfo(mode, p);
@@ -1045,24 +1349,54 @@
       discount += lineDiscount;
       totalUnits += qty;
       if (unitWeeks > maxWeeks) { maxWeeks = unitWeeks; bottleneck = { name: p.name, mode }; }
-      const badge = leadBadge(unitWeeks);
-      const modeTag = mode === "rent" ? '<span class="tag-rent">renta evento</span>' : "";
+      return { key, plantId, mode, name: p.name, cat: p.cat, sku: getSku(plantId), qty, unitPrice, unitWeeks, lineSubtotal, lineDiscount };
+    });
+    const logisticsOn = document.getElementById("logisticsToggle").checked;
+    const afterDiscount = subtotal - discount;
+    const logisticsFee = logisticsOn ? afterDiscount * 0.15 : 0;
+    const total = afterDiscount + logisticsFee;
+    const volumeBuffer = totalUnits > 100 ? Math.min(6, Math.floor(totalUnits / 300)) : 0;
+    const totalWeeks = maxWeeks + volumeBuffer;
+    return { items, subtotal, discount, totalUnits, maxWeeks, bottleneck, volumeBuffer, totalWeeks, logisticsOn, logisticsFee, total };
+  }
+
+  function renderManifest() {
+    document.getElementById("logisticsToggle").checked = state.logistics;
+
+    const linesEl = document.getElementById("lines");
+    const totalsEl = document.getElementById("totals");
+    const etaEl = document.getElementById("etaBlock");
+
+    const calc = computeCart();
+    document.getElementById("itemCount").textContent = calc.items.length + (calc.items.length === 1 ? " línea" : " líneas");
+
+    if (calc.items.length === 0) {
+      linesEl.innerHTML = '<p class="empty-hint">Agrega tu primera planta arriba.</p>';
+      totalsEl.style.display = "none";
+      etaEl.style.display = "none";
+      return;
+    }
+
+    const lineHtml = calc.items.map(it => {
+      const p = PLANTS.find(pl => pl.id === it.plantId);
+      const badge = leadBadge(it.unitWeeks);
+      const modeTag = it.mode === "rent" ? '<span class="tag-rent">renta evento</span>' : "";
       return `
-        <div class="line-item" data-key="${key}">
+        <div class="line-item" data-key="${it.key}">
           <div class="li-head">
             <span class="thumb thumb-lg">${plantIconSvg(p)}</span>
             <div class="li-main">
-              <div class="li-name">${escapeHtml(p.name)}</div>
-              <div class="li-sub"><span class="badge ${badge.cls}">${badge.label}</span><span>${p.cat}</span>${modeTag}</div>
+              <div class="li-name">${escapeHtml(it.name)}</div>
+              <div class="li-sub"><span class="badge ${badge.cls}">${badge.label}</span><span>${it.cat}</span>${modeTag}</div>
             </div>
           </div>
           <div class="stepper">
-            <button data-act="dec" aria-label="Quitar una unidad de ${escapeHtml(p.name)}">−</button>
-            <input type="text" inputmode="numeric" value="${qty}" data-role="qty" aria-label="Cantidad de ${escapeHtml(p.name)}">
-            <button data-act="inc" aria-label="Agregar una unidad de ${escapeHtml(p.name)}">+</button>
+            <button data-act="dec" aria-label="Quitar una unidad de ${escapeHtml(it.name)}">−</button>
+            <input type="text" inputmode="numeric" value="${it.qty}" data-role="qty" aria-label="Cantidad de ${escapeHtml(it.name)}">
+            <button data-act="inc" aria-label="Agregar una unidad de ${escapeHtml(it.name)}">+</button>
           </div>
-          <div class="li-total">${money(lineSubtotal - lineDiscount)}</div>
-          <button class="li-remove" data-remove="${key}" aria-label="Quitar ${escapeHtml(p.name)}">✕</button>
+          <div class="li-total">${money(it.lineSubtotal - it.lineDiscount)}</div>
+          <button class="li-remove" data-remove="${it.key}" aria-label="Quitar ${escapeHtml(it.name)}">✕</button>
         </div>`;
     }).join("");
 
@@ -1078,44 +1412,37 @@
       input.addEventListener("change", () => setQty(key, input.value));
     });
 
-    const logisticsOn = document.getElementById("logisticsToggle").checked;
-    const afterDiscount = subtotal - discount;
-    const logisticsFee = logisticsOn ? afterDiscount * 0.15 : 0;
-    const total = afterDiscount + logisticsFee;
-
-    document.getElementById("subtotalOut").textContent = money(subtotal);
+    document.getElementById("subtotalOut").textContent = money(calc.subtotal);
     const discountRow = document.getElementById("discountRow");
-    if (discount > 0) {
+    if (calc.discount > 0) {
       discountRow.style.display = "flex";
-      document.getElementById("discountOut").textContent = "−" + money(discount);
+      document.getElementById("discountOut").textContent = "−" + money(calc.discount);
     } else {
       discountRow.style.display = "none";
     }
     const logisticsRow = document.getElementById("logisticsRow");
-    if (logisticsOn) {
+    if (calc.logisticsOn) {
       logisticsRow.style.display = "flex";
-      document.getElementById("logisticsOut").textContent = money(logisticsFee);
+      document.getElementById("logisticsOut").textContent = money(calc.logisticsFee);
     } else {
       logisticsRow.style.display = "none";
     }
-    document.getElementById("totalOut").textContent = money(total);
+    document.getElementById("totalOut").textContent = money(calc.total);
     totalsEl.style.display = "flex";
 
-    const volumeBuffer = totalUnits > 100 ? Math.min(6, Math.floor(totalUnits / 300)) : 0;
-    const totalWeeks = maxWeeks + volumeBuffer;
     const today = new Date();
     today.setHours(0, 0, 0, 0);
     const ready = new Date(today);
-    ready.setDate(ready.getDate() + totalWeeks * 7);
+    ready.setDate(ready.getDate() + calc.totalWeeks * 7);
     const readyStr = formatDate(ready);
 
-    const bottleneckLabel = bottleneck.mode === "rent" ? `${bottleneck.name} (renta)` : bottleneck.name;
-    const whyText = volumeBuffer > 0
-      ? `Cuello de botella: ${bottleneckLabel} (${maxWeeks} sem) + ${volumeBuffer} sem de logística por volumen (${totalUnits} unidades).`
-      : `Cuello de botella: ${bottleneckLabel}, la especie más lenta del pedido (${maxWeeks} sem).`;
+    const bottleneckLabel = calc.bottleneck.mode === "rent" ? `${calc.bottleneck.name} (renta)` : calc.bottleneck.name;
+    const whyText = calc.volumeBuffer > 0
+      ? `Cuello de botella: ${bottleneckLabel} (${calc.maxWeeks} sem) + ${calc.volumeBuffer} sem de logística por volumen (${calc.totalUnits} unidades).`
+      : `Cuello de botella: ${bottleneckLabel}, la especie más lenta del pedido (${calc.maxWeeks} sem).`;
 
     const etaTargetEl = document.getElementById("etaTarget");
-    let onTime = totalWeeks <= 3;
+    let onTime = calc.totalWeeks <= 3;
 
     if (state.targetDate) {
       const target = parseDateInput(state.targetDate);
@@ -1133,7 +1460,7 @@
     etaEl.classList.toggle("fast", onTime);
     document.getElementById("etaLabel").textContent =
       state.targetDate ? (onTime ? "A tiempo para tu fecha" : "Riesgo de retraso") : (onTime ? "Listo pronto" : "Fecha estimada de entrega");
-    document.getElementById("etaDate").textContent = `${readyStr} · ${totalWeeks} semana${totalWeeks === 1 ? "" : "s"}`;
+    document.getElementById("etaDate").textContent = `${readyStr} · ${calc.totalWeeks} semana${calc.totalWeeks === 1 ? "" : "s"}`;
     document.getElementById("etaWhy").textContent = whyText;
   }
 
@@ -1152,12 +1479,314 @@
     renderManifest();
   });
 
+  /* ---------- confirm order (cliente) ---------- */
+
+  function confirmOrder() {
+    const errEl = document.getElementById("orderError");
+    const calc = computeCart();
+    if (calc.items.length === 0) {
+      errEl.textContent = "Agrega al menos una planta antes de confirmar tu orden.";
+      errEl.style.display = "block";
+      return;
+    }
+    if (!state.targetDate) {
+      errEl.textContent = 'Ponle una fecha en "Editar datos" antes de confirmar: la necesitamos para el calendario de producción.';
+      errEl.style.display = "block";
+      return;
+    }
+    errEl.style.display = "none";
+
+    const order = {
+      number: nextOrderNumber(),
+      createdAt: new Date().toISOString(),
+      company: state.company,
+      projectType: state.projectType,
+      targetDate: state.targetDate,
+      logistics: calc.logisticsOn,
+      items: calc.items.map(it => ({
+        plantId: it.plantId, mode: it.mode, name: it.name, cat: it.cat, sku: it.sku,
+        qty: it.qty, unitPrice: it.unitPrice, unitWeeks: it.unitWeeks,
+      })),
+      subtotal: calc.subtotal,
+      discount: calc.discount,
+      logisticsFee: calc.logisticsFee,
+      total: calc.total,
+      status: "Recibido",
+    };
+    const orders = loadOrders();
+    orders.push(order);
+    saveOrders(orders);
+
+    Object.keys(cart).forEach(k => delete cart[k]);
+    saveState();
+    renderManifest();
+
+    switchClientTab("pedidos");
+  }
+
+  document.getElementById("confirmOrderBtn").addEventListener("click", confirmOrder);
+
+  /* ---------- mis pedidos (cliente) ---------- */
+
+  function renderMisPedidos() {
+    const orders = loadOrders().slice().sort((a, b) => b.createdAt.localeCompare(a.createdAt));
+    const el = document.getElementById("misPedidosList");
+    if (!orders.length) {
+      el.innerHTML = '<p class="empty-hint">Todavía no has confirmado ninguna orden. Arma tu cotización y confírmala para verla aquí.</p>';
+      return;
+    }
+    el.innerHTML = orders.map(o => `
+      <div class="order-card">
+        <div class="order-head">
+          <span class="order-num">${o.number}</span>
+          <span class="status-pill ${statusClass(o.status)}">${o.status}</span>
+        </div>
+        <div class="order-meta">${PROJECT_LABELS[o.projectType]} · fecha objetivo: ${o.targetDate ? formatDate(parseDateInput(o.targetDate)) : "sin definir"} · ${money(o.total)}</div>
+        <div class="order-items">
+          ${o.items.map(it => `<div class="oi-row"><span>${escapeHtml(it.name)} ×${it.qty}${it.mode === "rent" ? " (renta)" : ""}</span><span class="oi-sku">${escapeHtml(it.sku)}</span></div>`).join("")}
+        </div>
+      </div>
+    `).join("");
+  }
+
+  /* ---------- órdenes (admin) ---------- */
+
+  function renderOrdersAdmin() {
+    const orders = loadOrders().slice().sort((a, b) => b.createdAt.localeCompare(a.createdAt));
+    const el = document.getElementById("ordersAdminList");
+    if (!orders.length) {
+      el.innerHTML = '<p class="empty-hint">Todavía no hay órdenes de clientes.</p>';
+      return;
+    }
+    el.innerHTML = orders.map(o => `
+      <div class="order-card" data-number="${o.number}">
+        <div class="order-head">
+          <span class="order-num">${o.number}</span>
+          <select class="status-select" data-role="status">
+            ${STATUS_OPTIONS.map(s => `<option value="${s}" ${s === o.status ? "selected" : ""}>${s}</option>`).join("")}
+          </select>
+        </div>
+        <div class="order-meta">${escapeHtml(o.company)} · ${PROJECT_LABELS[o.projectType]} · fecha objetivo: ${o.targetDate ? formatDate(parseDateInput(o.targetDate)) : "sin definir"} · ${money(o.total)}</div>
+        <div class="order-items">
+          ${o.items.map(it => `<div class="oi-row"><span>${escapeHtml(it.name)} ×${it.qty}${it.mode === "rent" ? " (renta)" : ""}</span><span class="oi-sku">${escapeHtml(it.sku)}</span></div>`).join("")}
+        </div>
+      </div>
+    `).join("");
+    el.querySelectorAll('[data-role="status"]').forEach(sel => {
+      sel.addEventListener("change", () => {
+        const number = sel.closest(".order-card").dataset.number;
+        const ordersNow = loadOrders();
+        const ord = ordersNow.find(o => o.number === number);
+        if (ord) { ord.status = sel.value; saveOrders(ordersNow); }
+      });
+    });
+  }
+
+  /* ---------- catálogo / SKU (admin) ---------- */
+
+  function renderCatalogAdmin() {
+    const overrides = loadSkus();
+    const tbody = document.getElementById("catalogBody");
+    tbody.innerHTML = PLANTS.map(p => {
+      const sku = overrides[p.id] || defaultSku(p);
+      return `<tr data-id="${p.id}">
+        <td><span class="thumb">${plantIconSvg(p)}</span></td>
+        <td>${escapeHtml(p.name)}</td>
+        <td class="cat-td">${p.cat}</td>
+        <td><input type="text" value="${escapeHtml(sku)}" data-role="sku"></td>
+        <td>${money(p.price)}</td>
+        <td>${p.weeks} sem</td>
+      </tr>`;
+    }).join("");
+    tbody.querySelectorAll('[data-role="sku"]').forEach(input => {
+      input.addEventListener("change", () => {
+        const id = input.closest("tr").dataset.id;
+        const plant = PLANTS.find(pl => pl.id === id);
+        const overridesNow = loadSkus();
+        const val = input.value.trim().toUpperCase();
+        if (!val || val === defaultSku(plant)) delete overridesNow[id]; else overridesNow[id] = val;
+        saveSkus(overridesNow);
+        input.value = getSku(id);
+      });
+    });
+  }
+
+  /* ---------- calendario (admin) ---------- */
+
+  function pad2(n) { return String(n).padStart(2, "0"); }
+  function toDateStr(y, m, d) { return `${y}-${pad2(m + 1)}-${pad2(d)}`; }
+  function addDaysStr(dateStr, delta) {
+    const [y, m, d] = dateStr.split("-").map(Number);
+    const dt = new Date(y, m - 1, d);
+    dt.setDate(dt.getDate() + delta);
+    return toDateStr(dt.getFullYear(), dt.getMonth(), dt.getDate());
+  }
+
+  function demandForDate(dateStr, orders) {
+    const required = [], reserved = [];
+    orders.forEach(o => {
+      if (!o.targetDate) return;
+      o.items.forEach(it => {
+        if (it.mode === "buy" && o.targetDate === dateStr) {
+          required.push({ name: it.name, qty: it.qty, order: o.number });
+        }
+        if (it.mode === "rent") {
+          const start = addDaysStr(o.targetDate, -3), end = addDaysStr(o.targetDate, 3);
+          if (dateStr >= start && dateStr <= end) {
+            reserved.push({ name: it.name, qty: it.qty, order: o.number, isDay: dateStr === o.targetDate });
+          }
+        }
+      });
+    });
+    return { required, reserved };
+  }
+
+  function renderCalendar() {
+    const orders = loadOrders();
+    const grid = document.getElementById("calGrid");
+    document.getElementById("calTitle").textContent = `${MONTH_NAMES[calState.month]} ${calState.year}`;
+
+    const firstOfMonth = new Date(calState.year, calState.month, 1);
+    const startOffset = (firstOfMonth.getDay() + 6) % 7;
+    const daysInMonth = new Date(calState.year, calState.month + 1, 0).getDate();
+
+    let html = DOW.map(d => `<div class="cal-dow">${d}</div>`).join("");
+    for (let i = 0; i < startOffset; i++) html += `<div class="cal-cell blank"></div>`;
+    for (let day = 1; day <= daysInMonth; day++) {
+      const dateStr = toDateStr(calState.year, calState.month, day);
+      const { required, reserved } = demandForDate(dateStr, orders);
+      const selectedCls = calState.selected === dateStr ? " selected" : "";
+      let dots = "";
+      if (required.length) dots += `<span class="cal-dot req">${required.reduce((s, r) => s + r.qty, 0)} req</span>`;
+      if (reserved.length) dots += `<span class="cal-dot res">${reserved.reduce((s, r) => s + r.qty, 0)} apart.</span>`;
+      html += `<div class="cal-cell${selectedCls}" data-date="${dateStr}">
+        <span class="cal-daynum">${day}</span>
+        <div class="cal-dot-row">${dots}</div>
+      </div>`;
+    }
+    grid.innerHTML = html;
+    grid.querySelectorAll(".cal-cell[data-date]").forEach(cell => {
+      cell.addEventListener("click", () => {
+        calState.selected = cell.dataset.date;
+        renderCalendar();
+      });
+    });
+    renderDayDetail();
+  }
+
+  function renderDayDetail() {
+    const el = document.getElementById("dayDetail");
+    if (!calState.selected) {
+      el.innerHTML = '<p class="empty-hint">Selecciona un día del calendario para ver el detalle.</p>';
+      return;
+    }
+    const orders = loadOrders();
+    const { required, reserved } = demandForDate(calState.selected, orders);
+    let html = `<h3>${formatDate(parseDateInput(calState.selected))}</h3>`;
+    if (!required.length && !reserved.length) {
+      html += '<p class="empty-hint">Sin demanda para este día.</p>';
+    } else {
+      html += required.map(r => `<div class="day-detail-row"><span>${escapeHtml(r.name)} · orden ${r.order}</span><span>${r.qty} u · requerido</span></div>`).join("");
+      html += reserved.map(r => `<div class="day-detail-row"><span>${escapeHtml(r.name)} · orden ${r.order}${r.isDay ? " (día del evento)" : ""}</span><span>${r.qty} u · apartado</span></div>`).join("");
+    }
+    el.innerHTML = html;
+  }
+
+  document.getElementById("calPrev").addEventListener("click", () => {
+    calState.month--; if (calState.month < 0) { calState.month = 11; calState.year--; }
+    calState.selected = null;
+    renderCalendar();
+  });
+  document.getElementById("calNext").addEventListener("click", () => {
+    calState.month++; if (calState.month > 11) { calState.month = 0; calState.year++; }
+    calState.selected = null;
+    renderCalendar();
+  });
+
+  /* ---------- tabs ---------- */
+
+  function switchClientTab(tab) {
+    document.getElementById("viewCotizador").style.display = tab === "cotizador" ? "block" : "none";
+    document.getElementById("viewPedidos").style.display = tab === "pedidos" ? "block" : "none";
+    document.querySelectorAll("#clientTabs .tab-btn").forEach(b => b.classList.toggle("active", b.dataset.tab === tab));
+    if (tab === "pedidos") renderMisPedidos();
+  }
+  document.querySelectorAll("#clientTabs .tab-btn").forEach(b => b.addEventListener("click", () => switchClientTab(b.dataset.tab)));
+
+  function switchAdminTab(tab) {
+    document.getElementById("viewCalendario").style.display = tab === "calendario" ? "block" : "none";
+    document.getElementById("viewCatalogo").style.display = tab === "catalogo" ? "block" : "none";
+    document.getElementById("viewOrdenes").style.display = tab === "ordenes" ? "block" : "none";
+    document.querySelectorAll("#adminTabs .tab-btn").forEach(b => b.classList.toggle("active", b.dataset.tab === tab));
+    if (tab === "calendario") renderCalendar();
+    if (tab === "catalogo") renderCatalogAdmin();
+    if (tab === "ordenes") renderOrdersAdmin();
+  }
+  document.querySelectorAll("#adminTabs .tab-btn").forEach(b => b.addEventListener("click", () => switchAdminTab(b.dataset.tab)));
+
+  /* ---------- auth ---------- */
+
+  function loadAuth() {
+    try {
+      const a = JSON.parse(localStorage.getItem("deroose-planner-auth") || "null");
+      if (a && a.role) auth.role = a.role;
+    } catch (e) { /* ignore */ }
+  }
+  function saveAuth() {
+    try { localStorage.setItem("deroose-planner-auth", JSON.stringify(auth)); } catch (e) { /* ignore */ }
+  }
+  function logout() {
+    auth.role = null;
+    saveAuth();
+    renderAuthGate();
+  }
+
+  document.querySelectorAll(".role-toggle button").forEach(btn => {
+    btn.addEventListener("click", () => {
+      loginRole = btn.dataset.role;
+      document.querySelectorAll(".role-toggle button").forEach(b => b.classList.toggle("active", b === btn));
+    });
+  });
+
+  document.getElementById("loginBtn").addEventListener("click", () => {
+    const pass = document.getElementById("loginPassword").value;
+    const errEl = document.getElementById("loginError");
+    if (CREDENTIALS[loginRole] === pass) {
+      errEl.style.display = "none";
+      auth.role = loginRole;
+      saveAuth();
+      document.getElementById("loginPassword").value = "";
+      renderAuthGate();
+    } else {
+      errEl.textContent = "Contraseña incorrecta.";
+      errEl.style.display = "block";
+    }
+  });
+  document.getElementById("loginPassword").addEventListener("keydown", (e) => {
+    if (e.key === "Enter") { e.preventDefault(); document.getElementById("loginBtn").click(); }
+  });
+
+  document.getElementById("logoutBtnCliente").addEventListener("click", logout);
+  document.getElementById("logoutBtnAdmin").addEventListener("click", logout);
+
+  function renderAuthGate() {
+    const login = document.getElementById("loginScreen");
+    const cli = document.getElementById("appCliente");
+    const adm = document.getElementById("appAdmin");
+    login.style.display = auth.role ? "none" : "block";
+    cli.style.display = auth.role === "cliente" ? "block" : "none";
+    adm.style.display = auth.role === "admin" ? "block" : "none";
+    if (auth.role === "admin") switchAdminTab("calendario");
+  }
+
   /* ---------- init ---------- */
 
+  loadAuth();
   loadState();
   fillStep1Fields();
   if (state.started && state.company) {
     showStep2();
   }
   renderManifest();
+  renderAuthGate();
 </script>
