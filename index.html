@@ -648,11 +648,34 @@
   .cal-cell.blank { visibility: hidden; cursor: default; }
   .cal-cell:hover { border-color: var(--accent); }
   .cal-cell.selected { border-color: var(--accent); box-shadow: 0 0 0 1px var(--accent); }
+  .cal-cell.today { border-color: var(--accent); background: color-mix(in srgb, var(--accent) 10%, var(--paper-raised)); }
   .cal-cell .cal-daynum { font-family: "IBM Plex Mono", monospace; font-size: 0.72rem; color: var(--muted); }
   .cal-dot-row { display: flex; gap: 3px; flex-wrap: wrap; min-width: 0; }
   .cal-dot { font-family: "IBM Plex Mono", monospace; font-size: 0.58rem; padding: 1px 4px; border-radius: 4px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; max-width: 100%; }
   .cal-dot.req { background: color-mix(in srgb, var(--accent) 18%, var(--paper-raised)); color: var(--accent); }
   .cal-dot.res { background: var(--gold-soft); color: var(--gold); }
+  .cal-dot.none { background: var(--line); color: var(--muted); }
+
+  .tabs-sub { margin-bottom: 14px; }
+
+  .cal-grid.year-mode { grid-template-columns: repeat(2, 1fr); }
+  @media (min-width: 420px) { .cal-grid.year-mode { grid-template-columns: repeat(3, 1fr); } }
+  @media (min-width: 620px) { .cal-grid.year-mode { grid-template-columns: repeat(4, 1fr); } }
+
+  .cal-month-cell {
+    min-height: 74px;
+    border: 1px solid var(--line);
+    border-radius: 8px;
+    padding: 10px;
+    background: var(--paper-raised);
+    cursor: pointer;
+    display: flex;
+    flex-direction: column;
+    gap: 6px;
+  }
+  .cal-month-cell:hover { border-color: var(--accent); }
+  .cal-month-cell.current { border-color: var(--accent); box-shadow: 0 0 0 1px var(--accent); }
+  .cal-month-name { font-family: "Fraunces", Georgia, serif; font-size: 0.95rem; font-weight: 500; }
 
   .day-detail { margin-top: 16px; }
   .day-detail h3 { font-family: "Fraunces", Georgia, serif; font-size: 1.02rem; font-weight: 500; margin: 0 0 10px; }
@@ -698,13 +721,22 @@
           <button type="button" data-role="cliente" class="active">Cliente</button>
           <button type="button" data-role="admin">Admin</button>
         </div>
+        <div class="field" id="usernameField">
+          <label for="loginUsername">Usuario</label>
+          <input type="text" id="loginUsername" autocomplete="username" placeholder="Ej. bodagarcia">
+        </div>
         <div class="field">
           <label for="loginPassword">Contraseña</label>
           <input type="password" id="loginPassword" placeholder="••••••••">
         </div>
+        <div class="field" id="confirmPasswordField" style="display:none;">
+          <label for="loginPasswordConfirm">Confirmar contraseña</label>
+          <input type="password" id="loginPasswordConfirm" placeholder="••••••••">
+        </div>
         <p class="error-msg" id="loginError" style="display:none;"></p>
         <button class="btn primary block" id="loginBtn">Entrar</button>
-        <p class="rent-note">Demo local: cliente y admin comparten los datos guardados en este navegador. No hay servidor ni base de datos real detrás de estas cuentas.</p>
+        <p class="rent-note" id="authModeToggleWrap">¿No tienes cuenta? <button type="button" class="link-btn" id="authModeLink">Crear una</button></p>
+        <p class="rent-note">Demo local: la cuenta cliente de prueba es <code>cliente</code> / <code>cliente123</code>. Los datos de todas las cuentas se guardan en este navegador; no hay servidor ni base de datos real detrás.</p>
       </div>
     </div>
   </div>
@@ -712,7 +744,7 @@
   <div id="appCliente" style="display:none;">
 
     <div class="session-bar">
-      <span>Sesión: <span class="role-badge">Cliente</span></span>
+      <span>Sesión: <span class="role-badge">Cliente</span> · <span id="clienteUsernameLabel"></span></span>
       <button class="link-btn" id="logoutBtnCliente">Cerrar sesión</button>
     </div>
 
@@ -859,9 +891,13 @@
     <div id="viewCalendario">
       <div class="card">
         <div class="cal-toolbar">
-          <button class="cal-nav-btn" id="calPrev" aria-label="Mes anterior">‹</button>
+          <button class="cal-nav-btn" id="calPrev" aria-label="Anterior">‹</button>
           <span class="cal-title" id="calTitle"></span>
-          <button class="cal-nav-btn" id="calNext" aria-label="Mes siguiente">›</button>
+          <button class="cal-nav-btn" id="calNext" aria-label="Siguiente">›</button>
+        </div>
+        <div class="tabs tabs-sub" id="calViewToggle">
+          <button type="button" class="tab-btn active" data-view="month">Mes</button>
+          <button type="button" class="tab-btn" data-view="year">Año</button>
         </div>
         <div class="cal-grid" id="calGrid"></div>
         <div class="day-detail" id="dayDetail"></div>
@@ -936,6 +972,10 @@
       note: "Crece grande; muy solicitada para interiores amplios." },
     { id: "anturio", name: "Anturio", cat: "Follaje de moda", price: 195, weeks: 3,
       note: "La planta ornamental más pedida en florería de diseño." },
+    { id: "bromelia", name: "Bromelia", cat: "Follaje de moda", price: 95, weeks: 3,
+      note: "Roseta compacta de bajo mantenimiento; acento de color para exterior semisombreado." },
+    { id: "neoregelia", name: "Neoregelia", cat: "Follaje de moda", price: 150, weeks: 4,
+      note: "Roseta de centro muy pigmentado; pieza de acento buscada en diseño de interior." },
 
     { id: "jazmin-arabia", name: "Jazmín de Arabia", cat: "Alta demanda, oferta lenta", price: 210, weeks: 11,
       note: "Florea blanco en primavera pero crece despacio. Cuello de botella real del mercado." },
@@ -971,7 +1011,7 @@
     diseno: "Florería de diseño",
   };
 
-  const CREDENTIALS = { cliente: "cliente123", admin: "admin123" };
+  const CREDENTIALS = { admin: "admin123" };
 
   const SKU_PREFIX = {
     "Piso atemporal": "ATP",
@@ -994,9 +1034,10 @@
   let dropdownItems = [];
   let hiIndex = -1;
   let currentMode = "buy";
-  let auth = { role: null };
+  let auth = { role: null, username: null };
   let loginRole = "cliente";
-  let calState = { year: (new Date()).getFullYear(), month: (new Date()).getMonth(), selected: null };
+  let loginMode = "login";
+  let calState = { year: (new Date()).getFullYear(), month: (new Date()).getMonth(), selected: null, view: "month" };
 
   function leadBadge(weeks) {
     if (weeks <= 2) return { cls: "fast", label: weeks + " sem" };
@@ -1055,8 +1096,19 @@
       <circle cx="24" cy="20" r="14" fill="#3d7a4e"/><circle cx="17" cy="16" r="2.3" fill="#e08a2e"/><circle cx="30" cy="24" r="2.3" fill="#e08a2e"/><circle cx="20" cy="27" r="2.3" fill="#e08a2e"/></svg>`,
   };
 
+  function rosetteIcon(leafColor, centerColor) {
+    const leaf = (angle) => `<path d="M24 24 L20.5 5 Q24 1 27.5 5 Z" fill="${leafColor}" transform="rotate(${angle} 24 24)"/>`;
+    const leaves = [0, 60, 120, 180, 240, 300].map(leaf).join("");
+    return `<svg viewBox="0 0 48 48">${leaves}<circle cx="24" cy="24" r="6" fill="${centerColor}"/></svg>`;
+  }
+  const ROSETTE_ICON = {
+    "bromelia": rosetteIcon("#3a7350", "#c96b3e"),
+    "neoregelia": rosetteIcon("#3a7350", "#c23a5a"),
+  };
+
   function plantIconSvg(plant) {
     if (TREE_ICON[plant.id]) return TREE_ICON[plant.id];
+    if (ROSETTE_ICON[plant.id]) return ROSETTE_ICON[plant.id];
     const template = CATEGORY_ICON[plant.cat] || CATEGORY_ICON["Piso atemporal"];
     return template(shadeFor(plant.id));
   }
@@ -1499,6 +1551,7 @@
     const order = {
       number: nextOrderNumber(),
       createdAt: new Date().toISOString(),
+      clientUsername: auth.username,
       company: state.company,
       projectType: state.projectType,
       targetDate: state.targetDate,
@@ -1529,7 +1582,9 @@
   /* ---------- mis pedidos (cliente) ---------- */
 
   function renderMisPedidos() {
-    const orders = loadOrders().slice().sort((a, b) => b.createdAt.localeCompare(a.createdAt));
+    const orders = loadOrders()
+      .filter(o => (o.clientUsername || "cliente") === auth.username)
+      .sort((a, b) => b.createdAt.localeCompare(a.createdAt));
     const el = document.getElementById("misPedidosList");
     if (!orders.length) {
       el.innerHTML = '<p class="empty-hint">Todavía no has confirmado ninguna orden. Arma tu cotización y confírmala para verla aquí.</p>';
@@ -1566,7 +1621,7 @@
             ${STATUS_OPTIONS.map(s => `<option value="${s}" ${s === o.status ? "selected" : ""}>${s}</option>`).join("")}
           </select>
         </div>
-        <div class="order-meta">${escapeHtml(o.company)} · ${PROJECT_LABELS[o.projectType]} · fecha objetivo: ${o.targetDate ? formatDate(parseDateInput(o.targetDate)) : "sin definir"} · ${money(o.total)}</div>
+        <div class="order-meta">${escapeHtml(o.company)} (usuario: ${escapeHtml(o.clientUsername || "cliente")}) · ${PROJECT_LABELS[o.projectType]} · fecha objetivo: ${o.targetDate ? formatDate(parseDateInput(o.targetDate)) : "sin definir"} · ${money(o.total)}</div>
         <div class="order-items">
           ${o.items.map(it => `<div class="oi-row"><span>${escapeHtml(it.name)} ×${it.qty}${it.mode === "rent" ? " (renta)" : ""}</span><span class="oi-sku">${escapeHtml(it.sku)}</span></div>`).join("")}
         </div>
@@ -1641,7 +1696,19 @@
     return { required, reserved };
   }
 
-  function renderCalendar() {
+  function todayStr() {
+    const t = new Date();
+    return toDateStr(t.getFullYear(), t.getMonth(), t.getDate());
+  }
+
+  function renderCalendarShell() {
+    const grid = document.getElementById("calGrid");
+    grid.classList.toggle("year-mode", calState.view === "year");
+    if (calState.view === "year") renderCalendarYear();
+    else renderCalendarMonth();
+  }
+
+  function renderCalendarMonth() {
     const orders = loadOrders();
     const grid = document.getElementById("calGrid");
     document.getElementById("calTitle").textContent = `${MONTH_NAMES[calState.month]} ${calState.year}`;
@@ -1649,17 +1716,20 @@
     const firstOfMonth = new Date(calState.year, calState.month, 1);
     const startOffset = (firstOfMonth.getDay() + 6) % 7;
     const daysInMonth = new Date(calState.year, calState.month + 1, 0).getDate();
+    const today = todayStr();
 
     let html = DOW.map(d => `<div class="cal-dow">${d}</div>`).join("");
     for (let i = 0; i < startOffset; i++) html += `<div class="cal-cell blank"></div>`;
     for (let day = 1; day <= daysInMonth; day++) {
       const dateStr = toDateStr(calState.year, calState.month, day);
       const { required, reserved } = demandForDate(dateStr, orders);
-      const selectedCls = calState.selected === dateStr ? " selected" : "";
+      let cls = "cal-cell";
+      if (calState.selected === dateStr) cls += " selected";
+      if (dateStr === today) cls += " today";
       let dots = "";
       if (required.length) dots += `<span class="cal-dot req">${required.reduce((s, r) => s + r.qty, 0)} req</span>`;
       if (reserved.length) dots += `<span class="cal-dot res">${reserved.reduce((s, r) => s + r.qty, 0)} apart.</span>`;
-      html += `<div class="cal-cell${selectedCls}" data-date="${dateStr}">
+      html += `<div class="${cls}" data-date="${dateStr}">
         <span class="cal-daynum">${day}</span>
         <div class="cal-dot-row">${dots}</div>
       </div>`;
@@ -1668,10 +1738,54 @@
     grid.querySelectorAll(".cal-cell[data-date]").forEach(cell => {
       cell.addEventListener("click", () => {
         calState.selected = cell.dataset.date;
-        renderCalendar();
+        renderCalendarShell();
       });
     });
     renderDayDetail();
+  }
+
+  function demandForMonthSummary(year, month, orders) {
+    const daysInMonth = new Date(year, month + 1, 0).getDate();
+    let reqUnits = 0, resUnits = 0;
+    for (let day = 1; day <= daysInMonth; day++) {
+      const dateStr = toDateStr(year, month, day);
+      const { required, reserved } = demandForDate(dateStr, orders);
+      reqUnits += required.reduce((s, r) => s + r.qty, 0);
+      resUnits += reserved.reduce((s, r) => s + r.qty, 0);
+    }
+    return { reqUnits, resUnits };
+  }
+
+  function renderCalendarYear() {
+    const orders = loadOrders();
+    const grid = document.getElementById("calGrid");
+    document.getElementById("calTitle").textContent = String(calState.year);
+
+    const now = new Date();
+    let html = "";
+    for (let m = 0; m < 12; m++) {
+      const { reqUnits, resUnits } = demandForMonthSummary(calState.year, m, orders);
+      let dots = "";
+      if (reqUnits) dots += `<span class="cal-dot req">${reqUnits} req</span>`;
+      if (resUnits) dots += `<span class="cal-dot res">${resUnits} apart.</span>`;
+      if (!reqUnits && !resUnits) dots = '<span class="cal-dot none">sin pedidos</span>';
+      const isCurrent = calState.year === now.getFullYear() && m === now.getMonth();
+      html += `<div class="cal-month-cell${isCurrent ? " current" : ""}" data-month="${m}">
+        <span class="cal-month-name">${MONTH_NAMES[m]}</span>
+        <div class="cal-dot-row">${dots}</div>
+      </div>`;
+    }
+    grid.innerHTML = html;
+    grid.querySelectorAll(".cal-month-cell[data-month]").forEach(cell => {
+      cell.addEventListener("click", () => {
+        calState.month = Number(cell.dataset.month);
+        calState.view = "month";
+        calState.selected = null;
+        document.querySelectorAll("#calViewToggle .tab-btn").forEach(b => b.classList.toggle("active", b.dataset.view === "month"));
+        renderCalendarShell();
+      });
+    });
+    document.getElementById("dayDetail").innerHTML = '<p class="empty-hint">Elige un mes para ver el detalle día por día.</p>';
   }
 
   function renderDayDetail() {
@@ -1693,14 +1807,30 @@
   }
 
   document.getElementById("calPrev").addEventListener("click", () => {
-    calState.month--; if (calState.month < 0) { calState.month = 11; calState.year--; }
+    if (calState.view === "year") {
+      calState.year--;
+    } else {
+      calState.month--; if (calState.month < 0) { calState.month = 11; calState.year--; }
+    }
     calState.selected = null;
-    renderCalendar();
+    renderCalendarShell();
   });
   document.getElementById("calNext").addEventListener("click", () => {
-    calState.month++; if (calState.month > 11) { calState.month = 0; calState.year++; }
+    if (calState.view === "year") {
+      calState.year++;
+    } else {
+      calState.month++; if (calState.month > 11) { calState.month = 0; calState.year++; }
+    }
     calState.selected = null;
-    renderCalendar();
+    renderCalendarShell();
+  });
+  document.querySelectorAll("#calViewToggle .tab-btn").forEach(btn => {
+    btn.addEventListener("click", () => {
+      calState.view = btn.dataset.view;
+      calState.selected = null;
+      document.querySelectorAll("#calViewToggle .tab-btn").forEach(b => b.classList.toggle("active", b === btn));
+      renderCalendarShell();
+    });
   });
 
   /* ---------- tabs ---------- */
@@ -1718,18 +1848,36 @@
     document.getElementById("viewCatalogo").style.display = tab === "catalogo" ? "block" : "none";
     document.getElementById("viewOrdenes").style.display = tab === "ordenes" ? "block" : "none";
     document.querySelectorAll("#adminTabs .tab-btn").forEach(b => b.classList.toggle("active", b.dataset.tab === tab));
-    if (tab === "calendario") renderCalendar();
+    if (tab === "calendario") renderCalendarShell();
     if (tab === "catalogo") renderCatalogAdmin();
     if (tab === "ordenes") renderOrdersAdmin();
   }
   document.querySelectorAll("#adminTabs .tab-btn").forEach(b => b.addEventListener("click", () => switchAdminTab(b.dataset.tab)));
+
+  /* ---------- accounts (cliente signup) ---------- */
+
+  function loadAccounts() {
+    try {
+      let accs = JSON.parse(localStorage.getItem("deroose-planner-accounts") || "null");
+      if (!accs) {
+        accs = { cliente: { password: "cliente123" } };
+        localStorage.setItem("deroose-planner-accounts", JSON.stringify(accs));
+      }
+      return accs;
+    } catch (e) {
+      return { cliente: { password: "cliente123" } };
+    }
+  }
+  function saveAccounts(accs) {
+    try { localStorage.setItem("deroose-planner-accounts", JSON.stringify(accs)); } catch (e) { /* ignore */ }
+  }
 
   /* ---------- auth ---------- */
 
   function loadAuth() {
     try {
       const a = JSON.parse(localStorage.getItem("deroose-planner-auth") || "null");
-      if (a && a.role) auth.role = a.role;
+      if (a && a.role) { auth.role = a.role; auth.username = a.username || null; }
     } catch (e) { /* ignore */ }
   }
   function saveAuth() {
@@ -1737,33 +1885,111 @@
   }
   function logout() {
     auth.role = null;
+    auth.username = null;
     saveAuth();
+    loginMode = "login";
+    applyLoginUI();
     renderAuthGate();
+  }
+
+  function applyLoginUI() {
+    const isAdmin = loginRole === "admin";
+    const isSignup = !isAdmin && loginMode === "signup";
+    document.getElementById("usernameField").style.display = isAdmin ? "none" : "block";
+    document.getElementById("confirmPasswordField").style.display = isSignup ? "block" : "none";
+    document.getElementById("authModeToggleWrap").style.display = isAdmin ? "none" : "block";
+    document.getElementById("loginBtn").textContent = isSignup ? "Crear cuenta" : "Entrar";
+    document.getElementById("authModeLink").textContent = isSignup ? "Ya tengo cuenta" : "Crear una";
+    document.getElementById("loginError").style.display = "none";
   }
 
   document.querySelectorAll(".role-toggle button").forEach(btn => {
     btn.addEventListener("click", () => {
       loginRole = btn.dataset.role;
+      if (loginRole === "admin") loginMode = "login";
       document.querySelectorAll(".role-toggle button").forEach(b => b.classList.toggle("active", b === btn));
+      applyLoginUI();
     });
   });
 
-  document.getElementById("loginBtn").addEventListener("click", () => {
-    const pass = document.getElementById("loginPassword").value;
-    const errEl = document.getElementById("loginError");
-    if (CREDENTIALS[loginRole] === pass) {
-      errEl.style.display = "none";
-      auth.role = loginRole;
-      saveAuth();
-      document.getElementById("loginPassword").value = "";
-      renderAuthGate();
-    } else {
-      errEl.textContent = "Contraseña incorrecta.";
-      errEl.style.display = "block";
-    }
+  document.getElementById("authModeLink").addEventListener("click", () => {
+    loginMode = loginMode === "signup" ? "login" : "signup";
+    applyLoginUI();
   });
-  document.getElementById("loginPassword").addEventListener("keydown", (e) => {
-    if (e.key === "Enter") { e.preventDefault(); document.getElementById("loginBtn").click(); }
+
+  function completeLogin(role, username) {
+    auth.role = role;
+    auth.username = role === "cliente" ? username : null;
+    saveAuth();
+    document.getElementById("loginUsername").value = "";
+    document.getElementById("loginPassword").value = "";
+    document.getElementById("loginPasswordConfirm").value = "";
+    loginMode = "login";
+    applyLoginUI();
+    renderAuthGate();
+  }
+
+  document.getElementById("loginBtn").addEventListener("click", () => {
+    const errEl = document.getElementById("loginError");
+
+    if (loginRole === "admin") {
+      const pass = document.getElementById("loginPassword").value;
+      if (CREDENTIALS.admin === pass) {
+        errEl.style.display = "none";
+        completeLogin("admin", null);
+      } else {
+        errEl.textContent = "Contraseña incorrecta.";
+        errEl.style.display = "block";
+      }
+      return;
+    }
+
+    const username = document.getElementById("loginUsername").value.trim();
+    const pass = document.getElementById("loginPassword").value;
+    if (!username) {
+      errEl.textContent = "Escribe un usuario.";
+      errEl.style.display = "block";
+      return;
+    }
+    const accounts = loadAccounts();
+
+    if (loginMode === "signup") {
+      const confirmPass = document.getElementById("loginPasswordConfirm").value;
+      if (accounts[username]) {
+        errEl.textContent = "Ese usuario ya existe. Inicia sesión o elige otro nombre.";
+        errEl.style.display = "block";
+        return;
+      }
+      if (!pass || pass.length < 4) {
+        errEl.textContent = "La contraseña debe tener al menos 4 caracteres.";
+        errEl.style.display = "block";
+        return;
+      }
+      if (pass !== confirmPass) {
+        errEl.textContent = "Las contraseñas no coinciden.";
+        errEl.style.display = "block";
+        return;
+      }
+      accounts[username] = { password: pass, createdAt: new Date().toISOString() };
+      saveAccounts(accounts);
+      errEl.style.display = "none";
+      completeLogin("cliente", username);
+      return;
+    }
+
+    if (!accounts[username] || accounts[username].password !== pass) {
+      errEl.textContent = "Usuario o contraseña incorrectos.";
+      errEl.style.display = "block";
+      return;
+    }
+    errEl.style.display = "none";
+    completeLogin("cliente", username);
+  });
+
+  ["loginUsername", "loginPassword", "loginPasswordConfirm"].forEach(id => {
+    document.getElementById(id).addEventListener("keydown", (e) => {
+      if (e.key === "Enter") { e.preventDefault(); document.getElementById("loginBtn").click(); }
+    });
   });
 
   document.getElementById("logoutBtnCliente").addEventListener("click", logout);
@@ -1776,17 +2002,22 @@
     login.style.display = auth.role ? "none" : "block";
     cli.style.display = auth.role === "cliente" ? "block" : "none";
     adm.style.display = auth.role === "admin" ? "block" : "none";
+    if (auth.role === "cliente") {
+      document.getElementById("clienteUsernameLabel").textContent = auth.username || "";
+    }
     if (auth.role === "admin") switchAdminTab("calendario");
   }
 
   /* ---------- init ---------- */
 
   loadAuth();
+  loadAccounts();
   loadState();
   fillStep1Fields();
   if (state.started && state.company) {
     showStep2();
   }
   renderManifest();
+  applyLoginUI();
   renderAuthGate();
 </script>
