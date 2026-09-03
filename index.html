@@ -19,6 +19,8 @@
     --stamp-soft: #f3e0db;
     --gold: #9c7a2e;
     --gold-soft: #efe4c9;
+    --info: #2f6fb0;
+    --info-soft: #dbe8f5;
     --shadow: rgba(27, 42, 30, 0.07);
   }
 
@@ -36,6 +38,8 @@
       --stamp-soft: #3a211c;
       --gold: #d9b15c;
       --gold-soft: #332a16;
+      --info: #6fa8dc;
+      --info-soft: #1c2a38;
       --shadow: rgba(0, 0, 0, 0.35);
     }
   }
@@ -53,6 +57,8 @@
     --stamp-soft: #3a211c;
     --gold: #d9b15c;
     --gold-soft: #332a16;
+    --info: #6fa8dc;
+    --info-soft: #1c2a38;
     --shadow: rgba(0, 0, 0, 0.35);
   }
 
@@ -145,7 +151,8 @@
     margin-bottom: 5px;
   }
 
-  .field input[type="text"], .field input[type="password"], .field input[type="date"], .field select {
+  .field input[type="text"], .field input[type="password"], .field input[type="date"],
+  .field input[type="email"], .field input[type="tel"], .field select, .field textarea {
     width: 100%;
     padding: 9px 11px;
     border: 1px solid var(--line);
@@ -155,6 +162,17 @@
     font-family: 'Roboto', sans-serif;
     font-size: 0.92rem;
   }
+  .field textarea { resize: vertical; min-height: 90px; font-family: 'Roboto', sans-serif; }
+  .field.checkbox-field label {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    text-transform: none;
+    font-size: 0.85rem;
+    color: var(--ink);
+    letter-spacing: normal;
+  }
+  .field.checkbox-field input[type="checkbox"] { width: auto; accent-color: var(--accent); }
 
   .btn {
     padding: 10px 16px;
@@ -715,12 +733,15 @@
     border-radius: 999px;
     white-space: nowrap;
   }
-  .status-pill.pending { background: var(--line); color: var(--muted); }
-  .status-pill.progress { background: var(--gold-soft); color: var(--gold); }
-  .status-pill.done { background: color-mix(in srgb, var(--accent) 18%, var(--paper-raised)); color: var(--accent-strong); }
+  .status-pill.st-new { background: var(--line); color: var(--muted); }
+  .status-pill.st-info { background: var(--info-soft); color: var(--info); }
+  .status-pill.st-warn { background: var(--gold-soft); color: var(--gold); }
+  .status-pill.st-done { background: color-mix(in srgb, var(--accent) 18%, var(--paper-raised)); color: var(--accent-strong); }
+  .status-pill.st-danger { background: var(--stamp-soft); color: var(--stamp); }
 
   .status-select {
     font-family: 'Roboto', sans-serif;
+    font-weight: 700;
     font-size: 0.74rem;
     padding: 5px 8px;
     border-radius: 6px;
@@ -728,6 +749,11 @@
     background: var(--paper);
     color: var(--ink);
   }
+  .status-select.st-new { border-color: var(--line); color: var(--muted); }
+  .status-select.st-info { border-color: var(--info); color: var(--info); }
+  .status-select.st-warn { border-color: var(--gold); color: var(--gold); }
+  .status-select.st-done { border-color: var(--accent); color: var(--accent-strong); }
+  .status-select.st-danger { border-color: var(--stamp); color: var(--stamp); }
 
   .order-card {
     border: 1px solid var(--line);
@@ -742,7 +768,24 @@
   .btn-print { padding: 6px 12px; font-size: 0.74rem; font-weight: 700; }
   .order-meta { font-size: 0.8rem; font-style: italic; color: var(--muted); }
   .order-items { font-size: 0.82rem; color: var(--ink); border-top: 1px dashed var(--line); padding-top: 8px; margin-top: 10px; }
-  .order-items .oi-row { display: flex; justify-content: space-between; gap: 8px; padding: 3px 0; }
+  .order-items .oi-row { display: flex; align-items: center; gap: 10px; padding: 5px 0; }
+  .order-items .oi-thumb { position: relative; flex-shrink: 0; }
+  .order-items .oi-qty-badge {
+    position: absolute;
+    right: -6px;
+    bottom: -6px;
+    background: var(--accent-strong);
+    color: var(--paper);
+    font-family: 'Roboto', sans-serif;
+    font-weight: 700;
+    font-size: 0.6rem;
+    padding: 1px 5px;
+    border-radius: 999px;
+    border: 1.5px solid var(--paper-raised);
+    white-space: nowrap;
+  }
+  .order-items .oi-name { flex: 1; min-width: 0; }
+  .order-items .oi-rent { color: var(--muted); font-style: italic; }
   .order-items .oi-row .oi-sku { font-family: 'Roboto', sans-serif; font-size: 0.72rem; color: var(--muted); white-space: nowrap; }
 
   .table-scroll { overflow-x: auto; }
@@ -759,7 +802,7 @@
     white-space: nowrap;
   }
   .admin-table td { padding: 8px 10px; border-bottom: 1px solid var(--line); vertical-align: middle; white-space: nowrap; }
-  .admin-table input[type="text"] {
+  .admin-table input[type="text"], .admin-table input[type="email"], .admin-table input[type="tel"] {
     width: 100%;
     min-width: 150px;
     padding: 6px 8px;
@@ -771,6 +814,10 @@
     font-size: 0.78rem;
   }
   .admin-table .cat-td { color: var(--muted); font-size: 0.78rem; white-space: normal; }
+  .admin-table input[type="checkbox"] { width: 16px; height: 16px; accent-color: var(--accent); cursor: pointer; }
+  .admin-table .customer-name { font-weight: 700; white-space: normal; }
+  .admin-table .spend-td { font-family: 'Roboto', sans-serif; font-weight: 700; }
+  .newsletter-hint { font-size: 0.8rem; color: var(--muted); font-style: italic; margin: 0 0 14px; }
 
   .cal-toolbar { display: flex; align-items: center; justify-content: space-between; margin-bottom: 14px; }
   .cal-toolbar .cal-title { font-family: 'Roboto', sans-serif; font-size: 1.15rem; font-weight: 700; }
@@ -899,6 +946,14 @@
           <label for="loginUsername">Usuario</label>
           <input type="text" id="loginUsername" autocomplete="username" placeholder="Ej. bodagarcia">
         </div>
+        <div class="field" id="signupEmailField" style="display:none;">
+          <label for="loginEmail">Correo</label>
+          <input type="email" id="loginEmail" autocomplete="email" placeholder="tucorreo@empresa.com">
+        </div>
+        <div class="field" id="signupPhoneField" style="display:none;">
+          <label for="loginPhone">Teléfono</label>
+          <input type="tel" id="loginPhone" autocomplete="tel" placeholder="55 1234 5678">
+        </div>
         <div class="field">
           <label for="loginPassword">Contraseña</label>
           <input type="password" id="loginPassword" placeholder="••••••••">
@@ -906,6 +961,9 @@
         <div class="field" id="confirmPasswordField" style="display:none;">
           <label for="loginPasswordConfirm">Confirmar contraseña</label>
           <input type="password" id="loginPasswordConfirm" placeholder="••••••••">
+        </div>
+        <div class="field checkbox-field" id="signupNewsletterField" style="display:none;">
+          <label><input type="checkbox" id="loginNewsletter" checked> Quiero recibir novedades y promociones por correo</label>
         </div>
         <p class="error-msg" id="loginError" style="display:none;"></p>
         <button class="btn primary block" id="loginBtn">Entrar</button>
@@ -1080,6 +1138,7 @@
       <button type="button" class="tab-btn active" data-tab="calendario">Calendario</button>
       <button type="button" class="tab-btn" data-tab="catalogo">Catálogo</button>
       <button type="button" class="tab-btn" data-tab="ordenes">Órdenes</button>
+      <button type="button" class="tab-btn" data-tab="clientes">Clientes</button>
     </nav>
 
     <div id="viewCalendario">
@@ -1116,6 +1175,33 @@
       <div class="card">
         <h2>Órdenes de clientes</h2>
         <div id="ordersAdminList"><p class="empty-hint">Cargando…</p></div>
+      </div>
+    </div>
+
+    <div id="viewClientes" style="display:none;">
+      <div class="card">
+        <h2>Clientes</h2>
+        <div class="table-scroll">
+          <table class="admin-table">
+            <thead>
+              <tr><th>Usuario</th><th>Correo</th><th>Teléfono</th><th>Newsletter</th><th>Pedidos</th><th>Total gastado</th><th></th></tr>
+            </thead>
+            <tbody id="customersBody"></tbody>
+          </table>
+        </div>
+      </div>
+      <div class="card">
+        <h2>Enviar newsletter</h2>
+        <p class="newsletter-hint">Se abre tu app de correo con los clientes suscritos en copia oculta (BCC) para que la envíes tú mismo.</p>
+        <div class="field">
+          <label for="newsletterSubject">Asunto</label>
+          <input type="text" id="newsletterSubject" placeholder="Novedades Deroose Plants">
+        </div>
+        <div class="field">
+          <label for="newsletterBody">Mensaje</label>
+          <textarea id="newsletterBody" placeholder="Escribe tu mensaje..."></textarea>
+        </div>
+        <button type="button" class="btn primary" id="sendNewsletterBtn">Enviar por correo (<span id="newsletterCount">0</span> suscritos)</button>
       </div>
     </div>
 
@@ -1299,7 +1385,7 @@
     "Flor de temporada": "TMP",
   };
 
-  const STATUS_OPTIONS = ["Recibido", "Confirmado", "En producción", "Listo para entrega", "Entregado"];
+  const STATUS_OPTIONS = ["Recibido", "Confirmado", "En producción", "Listo para entrega", "Entregado", "Cancelado"];
   const MONTH_NAMES = ["Enero","Febrero","Marzo","Abril","Mayo","Junio","Julio","Agosto","Septiembre","Octubre","Noviembre","Diciembre"];
   const DOW = ["L","M","M","J","V","S","D"];
 
@@ -1410,9 +1496,11 @@
     return `DP-${(new Date()).getFullYear()}-${String(seq).padStart(4, "0")}`;
   }
   function statusClass(s) {
-    if (s === "Entregado" || s === "Listo para entrega") return "done";
-    if (s === "Confirmado" || s === "En producción") return "progress";
-    return "pending";
+    if (s === "Cancelado") return "st-danger";
+    if (s === "Entregado" || s === "Listo para entrega") return "st-done";
+    if (s === "En producción") return "st-warn";
+    if (s === "Confirmado") return "st-info";
+    return "st-new";
   }
 
   /* ---------- imprimir / descargar orden ---------- */
@@ -1888,13 +1976,27 @@
         </div>
         <div class="order-meta">${PROJECT_LABELS[o.projectType]} · fecha objetivo: ${o.targetDate ? formatDate(parseDateInput(o.targetDate)) : "sin definir"} · ${money(o.total)}</div>
         <div class="order-items">
-          ${o.items.map(it => `<div class="oi-row"><span>${escapeHtml(it.name)} ×${it.qty}${it.mode === "rent" ? " (renta)" : ""}</span><span class="oi-sku">${escapeHtml(it.sku)}</span></div>`).join("")}
+          ${o.items.map(it => orderItemRowHtml(it)).join("")}
         </div>
       </div>
     `).join("");
     el.querySelectorAll('[data-print]').forEach(btn => {
       btn.addEventListener("click", () => printOrder(btn.dataset.print));
     });
+  }
+
+  function orderItemRowHtml(it) {
+    const plant = PLANTS.find(pl => pl.id === it.plantId);
+    const photo = plant ? photoUri(plant) : "";
+    return `
+      <div class="oi-row">
+        <span class="oi-thumb">
+          <span class="thumb">${photo ? `<img src="${photo}" alt="">` : ""}</span>
+          <span class="oi-qty-badge">×${it.qty}</span>
+        </span>
+        <span class="oi-name">${escapeHtml(it.name)}${it.mode === "rent" ? ' <span class="oi-rent">(renta)</span>' : ""}</span>
+        <span class="oi-sku">${escapeHtml(it.sku)}</span>
+      </div>`;
   }
 
   /* ---------- órdenes (admin) ---------- */
@@ -1912,14 +2014,14 @@
           <span class="order-num">${o.number}</span>
           <div class="order-actions">
             <button type="button" class="btn ghost btn-print" data-print="${o.number}">Imprimir / descargar</button>
-            <select class="status-select" data-role="status">
+            <select class="status-select ${statusClass(o.status)}" data-role="status">
               ${STATUS_OPTIONS.map(s => `<option value="${s}" ${s === o.status ? "selected" : ""}>${s}</option>`).join("")}
             </select>
           </div>
         </div>
         <div class="order-meta">${escapeHtml(o.company)} (usuario: ${escapeHtml(o.clientUsername || "cliente")}) · ${PROJECT_LABELS[o.projectType]} · fecha objetivo: ${o.targetDate ? formatDate(parseDateInput(o.targetDate)) : "sin definir"} · ${money(o.total)}</div>
         <div class="order-items">
-          ${o.items.map(it => `<div class="oi-row"><span>${escapeHtml(it.name)} ×${it.qty}${it.mode === "rent" ? " (renta)" : ""}</span><span class="oi-sku">${escapeHtml(it.sku)}</span></div>`).join("")}
+          ${o.items.map(it => orderItemRowHtml(it)).join("")}
         </div>
       </div>
     `).join("");
@@ -1932,9 +2034,80 @@
         const ordersNow = loadOrders();
         const ord = ordersNow.find(o => o.number === number);
         if (ord) { ord.status = sel.value; saveOrders(ordersNow); }
+        sel.className = `status-select ${statusClass(sel.value)}`;
       });
     });
   }
+
+  /* ---------- clientes / CRM (admin) ---------- */
+
+  function renderCustomers() {
+    const accounts = loadAccounts();
+    const orders = loadOrders();
+    const usernames = Object.keys(accounts).filter(u => u !== "admin");
+    const tbody = document.getElementById("customersBody");
+
+    if (!usernames.length) {
+      tbody.innerHTML = '<tr><td colspan="7"><p class="empty-hint">Todavía no hay clientes registrados.</p></td></tr>';
+    } else {
+      tbody.innerHTML = usernames.map(username => {
+        const acc = accounts[username] || {};
+        const customerOrders = orders.filter(o => (o.clientUsername || "cliente") === username);
+        const spent = customerOrders.filter(o => o.status !== "Cancelado").reduce((sum, o) => sum + o.total, 0);
+        return `
+          <tr data-username="${escapeHtml(username)}">
+            <td class="customer-name">${escapeHtml(username)}</td>
+            <td><input type="email" data-field="email" value="${escapeHtml(acc.email || "")}" placeholder="correo@ejemplo.com"></td>
+            <td><input type="tel" data-field="phone" value="${escapeHtml(acc.phone || "")}" placeholder="teléfono"></td>
+            <td><input type="checkbox" data-field="newsletter" ${acc.newsletter ? "checked" : ""}></td>
+            <td>${customerOrders.length}</td>
+            <td class="spend-td">${money(spent)}</td>
+            <td><a class="link-btn" data-role="mailto-link" href="mailto:${escapeHtml(acc.email || "")}" style="${acc.email ? "" : "display:none;"}">Enviar email</a></td>
+          </tr>`;
+      }).join("");
+    }
+
+    tbody.querySelectorAll("input[data-field]").forEach(input => {
+      input.addEventListener("change", () => {
+        const tr = input.closest("tr");
+        const username = tr.dataset.username;
+        const accs = loadAccounts();
+        if (!accs[username]) return;
+        const field = input.dataset.field;
+        accs[username][field] = field === "newsletter" ? input.checked : input.value.trim();
+        saveAccounts(accs);
+        if (field === "email") {
+          const link = tr.querySelector('[data-role="mailto-link"]');
+          const email = accs[username].email;
+          link.href = `mailto:${email}`;
+          link.style.display = email ? "" : "none";
+        }
+        updateNewsletterCount();
+      });
+    });
+
+    updateNewsletterCount();
+  }
+
+  function updateNewsletterCount() {
+    const accounts = loadAccounts();
+    const count = Object.keys(accounts).filter(u => u !== "admin" && accounts[u].newsletter && accounts[u].email).length;
+    document.getElementById("newsletterCount").textContent = count;
+  }
+
+  document.getElementById("sendNewsletterBtn").addEventListener("click", () => {
+    const accounts = loadAccounts();
+    const emails = Object.keys(accounts)
+      .filter(u => u !== "admin" && accounts[u].newsletter && accounts[u].email)
+      .map(u => accounts[u].email);
+    if (!emails.length) {
+      alert("Todavía no hay clientes suscritos con correo registrado.");
+      return;
+    }
+    const subject = document.getElementById("newsletterSubject").value.trim() || "Novedades Deroose Plants";
+    const body = document.getElementById("newsletterBody").value;
+    window.location.href = `mailto:?bcc=${encodeURIComponent(emails.join(","))}&subject=${encodeURIComponent(subject)}&body=${encodeURIComponent(body)}`;
+  });
 
   /* ---------- catálogo / SKU (admin) ---------- */
 
@@ -2146,10 +2319,12 @@
     document.getElementById("viewCalendario").style.display = tab === "calendario" ? "block" : "none";
     document.getElementById("viewCatalogo").style.display = tab === "catalogo" ? "block" : "none";
     document.getElementById("viewOrdenes").style.display = tab === "ordenes" ? "block" : "none";
+    document.getElementById("viewClientes").style.display = tab === "clientes" ? "block" : "none";
     document.querySelectorAll("#adminTabs .tab-btn").forEach(b => b.classList.toggle("active", b.dataset.tab === tab));
     if (tab === "calendario") renderCalendarShell();
     if (tab === "catalogo") renderCatalogAdmin();
     if (tab === "ordenes") renderOrdersAdmin();
+    if (tab === "clientes") renderCustomers();
   }
   document.querySelectorAll("#adminTabs .tab-btn").forEach(b => b.addEventListener("click", () => switchAdminTab(b.dataset.tab)));
 
@@ -2196,6 +2371,9 @@
     const isSignup = !isAdmin && loginMode === "signup";
     document.getElementById("usernameField").style.display = isAdmin ? "none" : "block";
     document.getElementById("confirmPasswordField").style.display = isSignup ? "block" : "none";
+    document.getElementById("signupEmailField").style.display = isSignup ? "block" : "none";
+    document.getElementById("signupPhoneField").style.display = isSignup ? "block" : "none";
+    document.getElementById("signupNewsletterField").style.display = isSignup ? "block" : "none";
     document.getElementById("authModeToggleWrap").style.display = isAdmin ? "none" : "block";
     document.getElementById("loginBtn").textContent = isSignup ? "Crear cuenta" : "Entrar";
     document.getElementById("authModeLink").textContent = isSignup ? "Ya tengo cuenta" : "Crear una";
@@ -2223,6 +2401,9 @@
     document.getElementById("loginUsername").value = "";
     document.getElementById("loginPassword").value = "";
     document.getElementById("loginPasswordConfirm").value = "";
+    document.getElementById("loginEmail").value = "";
+    document.getElementById("loginPhone").value = "";
+    document.getElementById("loginNewsletter").checked = true;
     loginMode = "login";
     applyLoginUI();
     renderAuthGate();
@@ -2254,8 +2435,16 @@
 
     if (loginMode === "signup") {
       const confirmPass = document.getElementById("loginPasswordConfirm").value;
+      const email = document.getElementById("loginEmail").value.trim();
+      const phone = document.getElementById("loginPhone").value.trim();
+      const newsletter = document.getElementById("loginNewsletter").checked;
       if (accounts[username]) {
         errEl.textContent = "Ese usuario ya existe. Inicia sesión o elige otro nombre.";
+        errEl.style.display = "block";
+        return;
+      }
+      if (!email || !email.includes("@")) {
+        errEl.textContent = "Escribe un correo válido.";
         errEl.style.display = "block";
         return;
       }
@@ -2269,7 +2458,7 @@
         errEl.style.display = "block";
         return;
       }
-      accounts[username] = { password: pass, createdAt: new Date().toISOString() };
+      accounts[username] = { password: pass, email, phone, newsletter, createdAt: new Date().toISOString() };
       saveAccounts(accounts);
       errEl.style.display = "none";
       completeLogin("cliente", username);
@@ -2285,7 +2474,7 @@
     completeLogin("cliente", username);
   });
 
-  ["loginUsername", "loginPassword", "loginPasswordConfirm"].forEach(id => {
+  ["loginUsername", "loginEmail", "loginPhone", "loginPassword", "loginPasswordConfirm"].forEach(id => {
     document.getElementById(id).addEventListener("keydown", (e) => {
       if (e.key === "Enter") { e.preventDefault(); document.getElementById("loginBtn").click(); }
     });
