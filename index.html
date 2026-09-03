@@ -738,6 +738,8 @@
   }
   .order-head { display: flex; justify-content: space-between; align-items: center; gap: 10px; flex-wrap: wrap; margin-bottom: 6px; }
   .order-num { font-family: 'Roboto', sans-serif; font-weight: 700; font-size: 0.92rem; }
+  .order-actions { display: flex; align-items: center; gap: 10px; flex-wrap: wrap; }
+  .btn-print { padding: 6px 12px; font-size: 0.74rem; font-weight: 700; }
   .order-meta { font-size: 0.8rem; font-style: italic; color: var(--muted); }
   .order-items { font-size: 0.82rem; color: var(--ink); border-top: 1px dashed var(--line); padding-top: 8px; margin-top: 10px; }
   .order-items .oi-row { display: flex; justify-content: space-between; gap: 8px; padding: 3px 0; }
@@ -843,6 +845,28 @@
     background: var(--paper);
     padding: 1px 5px;
     border-radius: 4px;
+  }
+
+  /* ---------- print (orden de compra) ---------- */
+
+  #printArea { display: none; }
+
+  #printArea .print-logo { height: 36px; width: auto; margin-bottom: 10px; }
+  #printArea h1 { font-family: 'Roboto', sans-serif; font-weight: 700; font-size: 1.3rem; margin: 0 0 4px; }
+  #printArea .print-order-num { font-family: 'Roboto', sans-serif; font-weight: 700; color: #57685c; margin: 0 0 18px; }
+  #printArea .print-meta p { margin: 0 0 4px; font-size: 0.9rem; }
+  #printArea table { width: 100%; border-collapse: collapse; margin: 18px 0; font-size: 0.85rem; }
+  #printArea th, #printArea td { border-bottom: 1px solid #ccc; padding: 6px 8px; text-align: left; }
+  #printArea th { font-weight: 700; }
+  #printArea td:nth-child(4), #printArea td:nth-child(5), #printArea td:nth-child(6),
+  #printArea th:nth-child(4), #printArea th:nth-child(5), #printArea th:nth-child(6) { text-align: right; }
+  #printArea .print-totals { margin-left: auto; width: 260px; }
+  #printArea .print-totals p { display: flex; justify-content: space-between; margin: 3px 0; font-size: 0.9rem; }
+  #printArea .print-totals .print-total { font-size: 1.1rem; font-weight: 700; border-top: 1px solid #333; padding-top: 6px; margin-top: 6px; }
+
+  @media print {
+    body > .wrap { display: none !important; }
+    #printArea { display: block !important; color: #111; background: #fff; padding: 30px; }
   }
 
   @media (max-width: 480px) {
@@ -1097,6 +1121,31 @@
 
   </div>
 
+</div>
+
+<div id="printArea">
+  <img class="brand-logo print-logo" alt="Deroose Plants">
+  <h1>Orden de compra</h1>
+  <p class="print-order-num" id="printOrderNumber"></p>
+  <div class="print-meta">
+    <p><strong>Cliente / proyecto:</strong> <span id="printCompany"></span></p>
+    <p><strong>Tipo de proyecto:</strong> <span id="printProjectType"></span></p>
+    <p><strong>Fecha de la orden:</strong> <span id="printCreatedAt"></span></p>
+    <p><strong>Fecha objetivo:</strong> <span id="printTargetDate"></span></p>
+    <p><strong>Estado:</strong> <span id="printStatus"></span></p>
+  </div>
+  <table>
+    <thead>
+      <tr><th>Planta</th><th>SKU</th><th>Modo</th><th>Cant.</th><th>P. unitario</th><th>Subtotal</th></tr>
+    </thead>
+    <tbody id="printItemsBody"></tbody>
+  </table>
+  <div class="print-totals">
+    <p><span>Subtotal</span><span id="printSubtotal"></span></p>
+    <p id="printDiscountRow" style="display:none;"><span>Descuento por volumen</span><span id="printDiscount"></span></p>
+    <p id="printLogisticsRow" style="display:none;"><span>Flete y montaje</span><span id="printLogistics"></span></p>
+    <p class="print-total"><span>Total</span><span id="printTotal"></span></p>
+  </div>
 </div>
 
 <script>
@@ -1364,6 +1413,49 @@
     if (s === "Entregado" || s === "Listo para entrega") return "done";
     if (s === "Confirmado" || s === "En producción") return "progress";
     return "pending";
+  }
+
+  /* ---------- imprimir / descargar orden ---------- */
+
+  function printOrder(orderNumber) {
+    const order = loadOrders().find(o => o.number === orderNumber);
+    if (!order) return;
+
+    document.getElementById("printOrderNumber").textContent = order.number;
+    document.getElementById("printCompany").textContent = order.company;
+    document.getElementById("printProjectType").textContent = PROJECT_LABELS[order.projectType] || order.projectType;
+    document.getElementById("printCreatedAt").textContent = formatDate(new Date(order.createdAt));
+    document.getElementById("printTargetDate").textContent = order.targetDate ? formatDate(parseDateInput(order.targetDate)) : "Sin definir";
+    document.getElementById("printStatus").textContent = order.status;
+
+    document.getElementById("printItemsBody").innerHTML = order.items.map(it => `
+      <tr>
+        <td>${escapeHtml(it.name)}</td>
+        <td>${escapeHtml(it.sku)}</td>
+        <td>${it.mode === "rent" ? "Renta" : "Compra"}</td>
+        <td>${it.qty}</td>
+        <td>${money(it.unitPrice)}</td>
+        <td>${money(it.unitPrice * it.qty)}</td>
+      </tr>`).join("");
+
+    document.getElementById("printSubtotal").textContent = money(order.subtotal);
+    const discountRow = document.getElementById("printDiscountRow");
+    if (order.discount > 0) {
+      discountRow.style.display = "flex";
+      document.getElementById("printDiscount").textContent = "−" + money(order.discount);
+    } else {
+      discountRow.style.display = "none";
+    }
+    const logisticsRow = document.getElementById("printLogisticsRow");
+    if (order.logistics) {
+      logisticsRow.style.display = "flex";
+      document.getElementById("printLogistics").textContent = money(order.logisticsFee);
+    } else {
+      logisticsRow.style.display = "none";
+    }
+    document.getElementById("printTotal").textContent = money(order.total);
+
+    window.print();
   }
 
   /* ---------- persistence (quote in progress) ---------- */
@@ -1786,10 +1878,13 @@
       return;
     }
     el.innerHTML = orders.map(o => `
-      <div class="order-card">
+      <div class="order-card" data-number="${o.number}">
         <div class="order-head">
           <span class="order-num">${o.number}</span>
-          <span class="status-pill ${statusClass(o.status)}">${o.status}</span>
+          <div class="order-actions">
+            <button type="button" class="btn ghost btn-print" data-print="${o.number}">Imprimir / descargar</button>
+            <span class="status-pill ${statusClass(o.status)}">${o.status}</span>
+          </div>
         </div>
         <div class="order-meta">${PROJECT_LABELS[o.projectType]} · fecha objetivo: ${o.targetDate ? formatDate(parseDateInput(o.targetDate)) : "sin definir"} · ${money(o.total)}</div>
         <div class="order-items">
@@ -1797,6 +1892,9 @@
         </div>
       </div>
     `).join("");
+    el.querySelectorAll('[data-print]').forEach(btn => {
+      btn.addEventListener("click", () => printOrder(btn.dataset.print));
+    });
   }
 
   /* ---------- órdenes (admin) ---------- */
@@ -1812,9 +1910,12 @@
       <div class="order-card" data-number="${o.number}">
         <div class="order-head">
           <span class="order-num">${o.number}</span>
-          <select class="status-select" data-role="status">
-            ${STATUS_OPTIONS.map(s => `<option value="${s}" ${s === o.status ? "selected" : ""}>${s}</option>`).join("")}
-          </select>
+          <div class="order-actions">
+            <button type="button" class="btn ghost btn-print" data-print="${o.number}">Imprimir / descargar</button>
+            <select class="status-select" data-role="status">
+              ${STATUS_OPTIONS.map(s => `<option value="${s}" ${s === o.status ? "selected" : ""}>${s}</option>`).join("")}
+            </select>
+          </div>
         </div>
         <div class="order-meta">${escapeHtml(o.company)} (usuario: ${escapeHtml(o.clientUsername || "cliente")}) · ${PROJECT_LABELS[o.projectType]} · fecha objetivo: ${o.targetDate ? formatDate(parseDateInput(o.targetDate)) : "sin definir"} · ${money(o.total)}</div>
         <div class="order-items">
@@ -1822,6 +1923,9 @@
         </div>
       </div>
     `).join("");
+    el.querySelectorAll('[data-print]').forEach(btn => {
+      btn.addEventListener("click", () => printOrder(btn.dataset.print));
+    });
     el.querySelectorAll('[data-role="status"]').forEach(sel => {
       sel.addEventListener("change", () => {
         const number = sel.closest(".order-card").dataset.number;
